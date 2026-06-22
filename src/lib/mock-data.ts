@@ -1,0 +1,140 @@
+import type {
+  FarmZone,
+  SensorReading,
+  Camera,
+  InventoryItem,
+  Product,
+  Sale,
+  SaleItem,
+  DryRoomBatch,
+  StoreRoomItem,
+  AffiliateLink,
+  DropshipOrder,
+  FarmSchedule,
+  Profile,
+} from "@/types/database";
+
+const uuid = (n: number) => `00000000-0000-0000-0000-${String(n).padStart(12, "0")}`;
+
+export const mockProfile: Profile = {
+  id: uuid(1),
+  email: "admin@greenwave.farm",
+  full_name: "Admin User",
+  role: "admin",
+  avatar_url: null,
+  phone: "+1234567890",
+  is_active: true,
+  affiliate_code: "GW-ADMIN",
+  created_at: "2025-01-01T00:00:00Z",
+  updated_at: "2025-06-01T00:00:00Z",
+};
+
+export const mockZones: FarmZone[] = [
+  { id: uuid(10), name: "Zone A - Seedling", zone_type: "seedling", description: "Seedling propagation area", is_active: true, created_at: "2025-01-01T00:00:00Z" },
+  { id: uuid(11), name: "Zone B - Vegetative", zone_type: "vegetative", description: "Vegetative growth chamber", is_active: true, created_at: "2025-01-01T00:00:00Z" },
+  { id: uuid(12), name: "Zone C - Flowering", zone_type: "flowering", description: "Flowering room with 12/12 light cycle", is_active: true, created_at: "2025-01-01T00:00:00Z" },
+  { id: uuid(13), name: "Zone D - Mother Plants", zone_type: "mother", description: "Mother plant preservation", is_active: true, created_at: "2025-01-01T00:00:00Z" },
+  { id: uuid(14), name: "Zone E - Clone", zone_type: "clone", description: "Cloning and rooting area", is_active: true, created_at: "2025-01-01T00:00:00Z" },
+];
+
+export const mockSensorReadings: SensorReading[] = mockZones.map((zone, i) => ({
+  id: uuid(100 + i),
+  zone_id: zone.id,
+  temperature: 22 + Math.random() * 6,
+  humidity: 45 + Math.random() * 25,
+  ph_level: 5.5 + Math.random() * 1.5,
+  ec_level: 1.0 + Math.random() * 1.5,
+  water_level: 60 + Math.random() * 35,
+  light_intensity: 400 + Math.random() * 600,
+  nutrient_ppm: 800 + Math.random() * 600,
+  created_at: new Date().toISOString(),
+}));
+
+export const mockCameras: Camera[] = [
+  { id: uuid(20), name: "Seedling Cam 1", zone_id: uuid(10), stream_url: "/api/stream/cam1", location: "Zone A - Ceiling", is_online: true, camera_type: "indoor", created_at: "2025-01-01T00:00:00Z" },
+  { id: uuid(21), name: "Veg Room Cam", zone_id: uuid(11), stream_url: "/api/stream/cam2", location: "Zone B - Corner", is_online: true, camera_type: "indoor", created_at: "2025-01-01T00:00:00Z" },
+  { id: uuid(22), name: "Flower Room Cam", zone_id: uuid(12), stream_url: "/api/stream/cam3", location: "Zone C - Center", is_online: true, camera_type: "indoor", created_at: "2025-01-01T00:00:00Z" },
+  { id: uuid(23), name: "Dry Room Cam", zone_id: null, stream_url: "/api/stream/cam4", location: "Dry Room", is_online: true, camera_type: "dryroom", created_at: "2025-01-01T00:00:00Z" },
+  { id: uuid(24), name: "Store Room Cam", zone_id: null, stream_url: "/api/stream/cam5", location: "Store Room", is_online: false, camera_type: "storeroom", created_at: "2025-01-01T00:00:00Z" },
+  { id: uuid(25), name: "Entrance Cam", zone_id: null, stream_url: "/api/stream/cam6", location: "Main Entrance", is_online: true, camera_type: "outdoor", created_at: "2025-01-01T00:00:00Z" },
+];
+
+export const mockInventory: InventoryItem[] = [
+  { id: uuid(30), name: "General Hydroponics Flora Grow", category: "nutrients", quantity: 25, unit: "liters", min_stock_level: 10, cost_per_unit: 15.0, supplier: "GH Supply", location: "farm", created_at: "2025-01-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
+  { id: uuid(31), name: "pH Down Solution", category: "chemicals", quantity: 8, unit: "liters", min_stock_level: 5, cost_per_unit: 12.0, supplier: "GH Supply", location: "farm", created_at: "2025-01-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
+  { id: uuid(32), name: "Rockwool Cubes (1000pc)", category: "equipment", quantity: 3, unit: "boxes", min_stock_level: 2, cost_per_unit: 45.0, supplier: "Grodan", location: "farm", created_at: "2025-01-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
+  { id: uuid(33), name: "Mylar Bags (100pc)", category: "packaging", quantity: 15, unit: "packs", min_stock_level: 5, cost_per_unit: 25.0, supplier: "PackCo", location: "store_room", created_at: "2025-01-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
+  { id: uuid(34), name: "OG Kush Seeds", category: "seeds", quantity: 50, unit: "seeds", min_stock_level: 20, cost_per_unit: 8.0, supplier: "SeedBank", location: "farm", created_at: "2025-01-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
+  { id: uuid(35), name: "CalMag Supplement", category: "nutrients", quantity: 12, unit: "liters", min_stock_level: 5, cost_per_unit: 18.0, supplier: "GH Supply", location: "farm", created_at: "2025-01-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
+];
+
+export const mockProducts: Product[] = [
+  { id: uuid(40), name: "Premium OG Kush - 3.5g", description: "Top shelf OG Kush flower", category: "Flower", price: 45.0, cost: 15.0, stock_quantity: 120, sku: "FLW-OGK-35", image_url: null, is_active: true, is_dropship: false, supplier_id: null, created_at: "2025-01-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
+  { id: uuid(41), name: "Blue Dream Pre-Roll 5pk", description: "Pre-rolled Blue Dream joints", category: "Pre-Roll", price: 35.0, cost: 10.0, stock_quantity: 80, sku: "PRE-BD-5PK", image_url: null, is_active: true, is_dropship: false, supplier_id: null, created_at: "2025-01-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
+  { id: uuid(42), name: "CBD Tincture 1000mg", description: "Full spectrum CBD oil", category: "Tincture", price: 65.0, cost: 20.0, stock_quantity: 45, sku: "TNC-CBD-1K", image_url: null, is_active: true, is_dropship: true, supplier_id: null, created_at: "2025-01-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
+  { id: uuid(43), name: "THC Gummies 10pk", description: "Assorted THC gummies", category: "Edible", price: 30.0, cost: 8.0, stock_quantity: 200, sku: "EDI-GUM-10", image_url: null, is_active: true, is_dropship: true, supplier_id: null, created_at: "2025-01-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
+];
+
+export const mockSaleItems: SaleItem[] = [
+  { id: uuid(61), sale_id: uuid(50), product_id: uuid(40), product_name: "Premium OG Kush - 3.5g", quantity: 2, unit_price: 45.0, total_price: 90.0 },
+  { id: uuid(62), sale_id: uuid(50), product_id: uuid(41), product_name: "Blue Dream Pre-Roll 5pk", quantity: 1, unit_price: 35.0, total_price: 35.0 },
+  { id: uuid(63), sale_id: uuid(51), product_id: uuid(43), product_name: "THC Gummies 10pk", quantity: 3, unit_price: 30.0, total_price: 90.0 },
+];
+
+export const mockSales: Sale[] = [
+  { id: uuid(50), customer_name: "John Doe", customer_email: "john@example.com", total_amount: 125.0, discount_amount: 0, tax_amount: 12.5, payment_method: "card", status: "completed", cashier_id: uuid(1), affiliate_id: null, notes: null, created_at: "2025-06-20T10:30:00Z" },
+  { id: uuid(51), customer_name: "Jane Smith", customer_email: "jane@example.com", total_amount: 90.0, discount_amount: 5.0, tax_amount: 8.5, payment_method: "cash", status: "completed", cashier_id: uuid(1), affiliate_id: null, notes: "Returning customer", created_at: "2025-06-20T14:15:00Z" },
+  { id: uuid(52), customer_name: "Bob Wilson", customer_email: null, total_amount: 65.0, discount_amount: 0, tax_amount: 6.5, payment_method: "transfer", status: "pending", cashier_id: uuid(1), affiliate_id: null, notes: null, created_at: "2025-06-21T09:00:00Z" },
+];
+
+export const mockDryRoomBatches: DryRoomBatch[] = [
+  { id: uuid(70), batch_name: "Batch-2025-06-A", strain: "OG Kush", zone_origin: "Zone C - Flowering", wet_weight_g: 5000, dry_weight_g: 1200, temperature: 20, humidity: 55, status: "curing", start_date: "2025-06-10", end_date: null, notes: "Good trichome coverage", created_at: "2025-06-10T00:00:00Z", updated_at: "2025-06-18T00:00:00Z" },
+  { id: uuid(71), batch_name: "Batch-2025-06-B", strain: "Blue Dream", zone_origin: "Zone C - Flowering", wet_weight_g: 4200, dry_weight_g: null, temperature: 21, humidity: 52, status: "drying", start_date: "2025-06-18", end_date: null, notes: null, created_at: "2025-06-18T00:00:00Z", updated_at: "2025-06-20T00:00:00Z" },
+  { id: uuid(72), batch_name: "Batch-2025-05-C", strain: "Gorilla Glue", zone_origin: "Zone C - Flowering", wet_weight_g: 3800, dry_weight_g: 950, temperature: 20, humidity: 58, status: "completed", start_date: "2025-05-20", end_date: "2025-06-05", notes: "Excellent yield", created_at: "2025-05-20T00:00:00Z", updated_at: "2025-06-05T00:00:00Z" },
+];
+
+export const mockStoreRoomItems: StoreRoomItem[] = [
+  { id: uuid(80), product_name: "OG Kush - Cured", batch_id: uuid(70), quantity: 800, unit: "grams", quality_grade: "A", shelf_location: "A1-01", expiry_date: "2026-06-01", status: "available", created_at: "2025-06-05T00:00:00Z", updated_at: "2025-06-15T00:00:00Z" },
+  { id: uuid(81), product_name: "Gorilla Glue - Cured", batch_id: uuid(72), quantity: 500, unit: "grams", quality_grade: "A", shelf_location: "A1-02", expiry_date: "2026-05-01", status: "available", created_at: "2025-06-05T00:00:00Z", updated_at: "2025-06-15T00:00:00Z" },
+  { id: uuid(82), product_name: "Blue Dream Trim", batch_id: null, quantity: 1200, unit: "grams", quality_grade: "B", shelf_location: "B2-01", expiry_date: "2026-03-01", status: "available", created_at: "2025-06-10T00:00:00Z", updated_at: "2025-06-15T00:00:00Z" },
+  { id: uuid(83), product_name: "OG Kush - Reserved", batch_id: uuid(70), quantity: 200, unit: "grams", quality_grade: "A", shelf_location: "A1-03", expiry_date: "2026-06-01", status: "reserved", created_at: "2025-06-05T00:00:00Z", updated_at: "2025-06-18T00:00:00Z" },
+];
+
+export const mockAffiliateLinks: AffiliateLink[] = [
+  { id: uuid(90), user_id: uuid(1), code: "GW-ADMIN", clicks: 245, conversions: 32, total_earned: 1520.0, is_active: true, created_at: "2025-01-15T00:00:00Z" },
+  { id: uuid(91), user_id: uuid(2), code: "GW-MIKE", clicks: 180, conversions: 21, total_earned: 980.0, is_active: true, created_at: "2025-02-01T00:00:00Z" },
+];
+
+export const mockDropshipOrders: DropshipOrder[] = [
+  { id: uuid(110), order_number: "DS-2025-0001", customer_name: "Alice Brown", customer_email: "alice@example.com", customer_address: "123 Main St, Portland, OR", product_id: uuid(42), quantity: 2, total_amount: 130.0, supplier_cost: 40.0, profit: 90.0, status: "delivered", tracking_number: "TRK123456", created_at: "2025-06-15T00:00:00Z", updated_at: "2025-06-19T00:00:00Z" },
+  { id: uuid(111), order_number: "DS-2025-0002", customer_name: "Charlie Green", customer_email: "charlie@example.com", customer_address: "456 Oak Ave, Denver, CO", product_id: uuid(43), quantity: 5, total_amount: 150.0, supplier_cost: 40.0, profit: 110.0, status: "shipped", tracking_number: "TRK789012", created_at: "2025-06-19T00:00:00Z", updated_at: "2025-06-20T00:00:00Z" },
+  { id: uuid(112), order_number: "DS-2025-0003", customer_name: "Diana White", customer_email: "diana@example.com", customer_address: "789 Pine Rd, Seattle, WA", product_id: uuid(42), quantity: 1, total_amount: 65.0, supplier_cost: 20.0, profit: 45.0, status: "pending", tracking_number: null, created_at: "2025-06-21T00:00:00Z", updated_at: "2025-06-21T00:00:00Z" },
+];
+
+export const mockSchedules: FarmSchedule[] = [
+  { id: uuid(120), zone_id: uuid(10), action_type: "water", scheduled_time: "06:00:00", is_recurring: true, recurrence_interval: "daily", is_active: true, last_executed: "2025-06-21T06:00:00Z", created_at: "2025-01-01T00:00:00Z" },
+  { id: uuid(121), zone_id: uuid(11), action_type: "nutrient", scheduled_time: "08:00:00", is_recurring: true, recurrence_interval: "every_2_days", is_active: true, last_executed: "2025-06-20T08:00:00Z", created_at: "2025-01-01T00:00:00Z" },
+  { id: uuid(122), zone_id: uuid(12), action_type: "light_on", scheduled_time: "18:00:00", is_recurring: true, recurrence_interval: "daily", is_active: true, last_executed: "2025-06-21T18:00:00Z", created_at: "2025-01-01T00:00:00Z" },
+  { id: uuid(123), zone_id: uuid(12), action_type: "light_off", scheduled_time: "06:00:00", is_recurring: true, recurrence_interval: "daily", is_active: true, last_executed: "2025-06-21T06:00:00Z", created_at: "2025-01-01T00:00:00Z" },
+  { id: uuid(124), zone_id: uuid(11), action_type: "ph_adjust", scheduled_time: "12:00:00", is_recurring: true, recurrence_interval: "weekly", is_active: false, last_executed: null, created_at: "2025-01-01T00:00:00Z" },
+];
+
+export function generateSensorHistory(zoneId: string, hours: number = 24): SensorReading[] {
+  const readings: SensorReading[] = [];
+  const now = Date.now();
+  for (let i = 0; i < hours; i++) {
+    readings.push({
+      id: `hist-${zoneId}-${i}`,
+      zone_id: zoneId,
+      temperature: 22 + Math.sin(i / 4) * 3 + Math.random() * 1,
+      humidity: 55 + Math.cos(i / 6) * 10 + Math.random() * 3,
+      ph_level: 6.0 + Math.sin(i / 8) * 0.5 + Math.random() * 0.2,
+      ec_level: 1.5 + Math.sin(i / 5) * 0.3 + Math.random() * 0.1,
+      water_level: 75 + Math.cos(i / 3) * 15 + Math.random() * 2,
+      light_intensity: i % 24 < 18 ? 600 + Math.random() * 200 : 0,
+      nutrient_ppm: 1000 + Math.sin(i / 4) * 200 + Math.random() * 50,
+      created_at: new Date(now - (hours - i) * 3600000).toISOString(),
+    });
+  }
+  return readings;
+}
