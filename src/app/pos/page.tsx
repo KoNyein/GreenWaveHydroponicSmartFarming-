@@ -4,6 +4,8 @@ import { useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card } from "@/components/ui/Card";
 import { formatCurrency } from "@/lib/utils";
+import { useSettingsStore } from "@/lib/store";
+import { t } from "@/lib/translations";
 import { mockProducts } from "@/lib/mock-data";
 import { ShoppingCart, Plus, Minus, Trash2, CreditCard, Banknote, ArrowRightLeft, Search } from "lucide-react";
 
@@ -15,6 +17,8 @@ interface CartItem {
 }
 
 export default function POSPage() {
+  const { locale } = useSettingsStore();
+  const tr = (key: string) => t(key, locale);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "card" | "transfer">("cash");
@@ -70,18 +74,18 @@ export default function POSPage() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold">POS System</h1>
+        <h1 className="text-2xl font-bold">{tr("pos.title")}</h1>
 
         {showReceipt ? (
-          <Card title="Receipt" className="max-w-md mx-auto">
+          <Card title={tr("pos.receipt")} className="max-w-md mx-auto">
             <div className="text-center mb-4">
               <h2 className="text-lg font-bold">GreenWave Farm</h2>
               <p className="text-sm text-gray-500">Hydroponic Smart Farming</p>
             </div>
             <div className="border-t border-dashed border-gray-300 py-3">
-              {customerName && <p className="text-sm mb-2">Customer: {customerName}</p>}
-              <p className="text-sm mb-2">Payment: {paymentMethod.toUpperCase()}</p>
-              <p className="text-sm mb-3">Date: {new Date().toLocaleString()}</p>
+              {customerName && <p className="text-sm mb-2">{tr("pos.customer")}: {customerName}</p>}
+              <p className="text-sm mb-2">{tr("pos.payment")}: {paymentMethod.toUpperCase()}</p>
+              <p className="text-sm mb-3">{tr("pos.date")}: {new Date().toLocaleString()}</p>
             </div>
             <div className="border-t border-dashed border-gray-300 py-3 space-y-2">
               {cart.map((item) => (
@@ -93,17 +97,17 @@ export default function POSPage() {
             </div>
             <div className="border-t border-dashed border-gray-300 pt-3 space-y-1">
               <div className="flex justify-between text-sm">
-                <span>Subtotal</span><span>{formatCurrency(subtotal)}</span>
+                <span>{tr("pos.subtotal")}</span><span>{formatCurrency(subtotal)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span>Tax (10%)</span><span>{formatCurrency(tax)}</span>
+                <span>{tr("pos.tax")}</span><span>{formatCurrency(tax)}</span>
               </div>
               <div className="flex justify-between font-bold text-lg mt-2">
-                <span>Total</span><span>{formatCurrency(total)}</span>
+                <span>{tr("pos.total")}</span><span>{formatCurrency(total)}</span>
               </div>
             </div>
             <button onClick={handleNewSale} className="w-full mt-6 py-2.5 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition">
-              New Sale
+              {tr("pos.newSale")}
             </button>
           </Card>
         ) : (
@@ -116,7 +120,7 @@ export default function POSPage() {
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search products..."
+                  placeholder={tr("pos.searchProducts")}
                   className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none text-sm"
                 />
               </div>
@@ -143,18 +147,18 @@ export default function POSPage() {
             </div>
 
             {/* Cart */}
-            <Card title="Cart" action={<span className="text-sm text-gray-500">{cart.length} items</span>}>
+            <Card title={tr("pos.cart")} action={<span className="text-sm text-muted">{cart.length} {tr("pos.items")}</span>}>
               <div className="space-y-4">
                 <input
                   type="text"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  placeholder="Customer name (optional)"
+                  placeholder={tr("pos.customerName")}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary"
                 />
 
                 {cart.length === 0 ? (
-                  <p className="text-center text-gray-400 py-8 text-sm">Cart is empty</p>
+                  <p className="text-center text-muted py-8 text-sm">{tr("pos.cartEmpty")}</p>
                 ) : (
                   <div className="space-y-3 max-h-60 overflow-y-auto">
                     {cart.map((item) => (
@@ -182,12 +186,12 @@ export default function POSPage() {
 
                 {/* Payment Method */}
                 <div>
-                  <p className="text-sm font-medium mb-2">Payment Method</p>
+                  <p className="text-sm font-medium mb-2">{tr("pos.paymentMethod")}</p>
                   <div className="grid grid-cols-3 gap-2">
                     {([
-                      { key: "cash" as const, label: "Cash", icon: Banknote },
-                      { key: "card" as const, label: "Card", icon: CreditCard },
-                      { key: "transfer" as const, label: "Transfer", icon: ArrowRightLeft },
+                      { key: "cash" as const, label: tr("pos.cash"), icon: Banknote },
+                      { key: "card" as const, label: tr("pos.card"), icon: CreditCard },
+                      { key: "transfer" as const, label: tr("pos.transfer"), icon: ArrowRightLeft },
                     ]).map((pm) => (
                       <button
                         key={pm.key}
@@ -207,9 +211,9 @@ export default function POSPage() {
 
                 {/* Totals */}
                 <div className="border-t border-gray-200 pt-3 space-y-1">
-                  <div className="flex justify-between text-sm"><span>Subtotal</span><span>{formatCurrency(subtotal)}</span></div>
-                  <div className="flex justify-between text-sm"><span>Tax (10%)</span><span>{formatCurrency(tax)}</span></div>
-                  <div className="flex justify-between font-bold text-lg mt-2"><span>Total</span><span>{formatCurrency(total)}</span></div>
+                  <div className="flex justify-between text-sm"><span>{tr("pos.subtotal")}</span><span>{formatCurrency(subtotal)}</span></div>
+                  <div className="flex justify-between text-sm"><span>{tr("pos.tax")}</span><span>{formatCurrency(tax)}</span></div>
+                  <div className="flex justify-between font-bold text-lg mt-2"><span>{tr("pos.total")}</span><span>{formatCurrency(total)}</span></div>
                 </div>
 
                 <button
@@ -217,7 +221,7 @@ export default function POSPage() {
                   disabled={cart.length === 0}
                   className="w-full py-2.5 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Checkout
+                  {tr("pos.checkout")}
                 </button>
               </div>
             </Card>

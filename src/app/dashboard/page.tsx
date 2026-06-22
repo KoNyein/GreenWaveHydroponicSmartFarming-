@@ -4,6 +4,8 @@ import DashboardLayout from "@/components/layout/DashboardLayout";
 import { StatCard, Card } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
+import { useSettingsStore } from "@/lib/store";
+import { t } from "@/lib/translations";
 import {
   mockZones,
   mockSensorReadings,
@@ -25,6 +27,9 @@ import {
 } from "lucide-react";
 
 export default function DashboardPage() {
+  const { locale } = useSettingsStore();
+  const tr = (key: string) => t(key, locale);
+
   const totalRevenue = mockSales.reduce((s, sale) => s + sale.total_amount, 0);
   const lowStock = mockInventory.filter((i) => i.quantity <= i.min_stock_level);
   const onlineCams = mockCameras.filter((c) => c.is_online);
@@ -35,52 +40,50 @@ export default function DashboardPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="text-gray-500 text-sm mt-1">Welcome to GreenWave Hydroponic Smart Farming</p>
+          <h1 className="text-2xl font-bold">{tr("dashboard.title")}</h1>
+          <p className="text-muted text-sm mt-1">{tr("dashboard.welcome")}</p>
         </div>
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
-            label="Active Zones"
+            label={tr("dashboard.activeZones")}
             value={mockZones.filter((z) => z.is_active).length}
             icon={<Leaf className="w-5 h-5" />}
-            change={`${mockZones.length} total zones`}
+            change={`${mockZones.length} ${tr("dashboard.totalZones")}`}
             changeType="neutral"
           />
           <StatCard
-            label="Total Revenue"
+            label={tr("dashboard.totalRevenue")}
             value={formatCurrency(totalRevenue)}
             icon={<DollarSign className="w-5 h-5" />}
-            change="+12.5% this month"
+            change={tr("dashboard.thisMonth")}
             changeType="up"
             color="bg-blue-500"
           />
           <StatCard
-            label="Cameras Online"
+            label={tr("dashboard.camerasOnline")}
             value={`${onlineCams.length}/${mockCameras.length}`}
             icon={<Camera className="w-5 h-5" />}
-            change={onlineCams.length === mockCameras.length ? "All systems online" : "Some offline"}
+            change={onlineCams.length === mockCameras.length ? tr("dashboard.allOnline") : tr("dashboard.someOffline")}
             changeType={onlineCams.length === mockCameras.length ? "up" : "down"}
             color="bg-purple-500"
           />
           <StatCard
-            label="Low Stock Alerts"
+            label={tr("dashboard.lowStockAlerts")}
             value={lowStock.length}
             icon={<Package className="w-5 h-5" />}
-            change={lowStock.length > 0 ? "Needs attention" : "Stock levels OK"}
+            change={lowStock.length > 0 ? tr("dashboard.needsAttention") : tr("dashboard.stockOk")}
             changeType={lowStock.length > 0 ? "down" : "up"}
             color="bg-orange-500"
           />
         </div>
 
-        {/* Zone Sensor Overview */}
-        <Card title="Farm Zone Status" subtitle="Real-time sensor readings across all zones">
+        <Card title={tr("dashboard.farmZoneStatus")} subtitle={tr("dashboard.realtimeSensors")}>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {mockZones.map((zone) => {
               const reading = mockSensorReadings.find((r) => r.zone_id === zone.id);
               return (
-                <div key={zone.id} className="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                <div key={zone.id} className="bg-hover-bg rounded-lg p-4 border border-card-border">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="font-medium text-sm">{zone.name}</h4>
                     <StatusBadge status={zone.is_active ? "active" : "offline"} />
@@ -101,7 +104,7 @@ export default function DashboardPage() {
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Wind className="w-3.5 h-3.5 text-teal-500" />
-                        <span>{reading.water_level.toFixed(0)}% water</span>
+                        <span>{reading.water_level.toFixed(0)}% {tr("common.water")}</span>
                       </div>
                     </div>
                   )}
@@ -111,16 +114,14 @@ export default function DashboardPage() {
           </div>
         </Card>
 
-        {/* Bottom grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Recent Sales */}
-          <Card title="Recent Sales" subtitle="Latest transactions">
+          <Card title={tr("dashboard.recentSales")} subtitle={tr("dashboard.latestTransactions")}>
             <div className="space-y-3">
               {mockSales.slice(0, 5).map((sale) => (
-                <div key={sale.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                <div key={sale.id} className="flex items-center justify-between py-2 border-b border-card-border last:border-0">
                   <div>
-                    <p className="text-sm font-medium">{sale.customer_name ?? "Walk-in"}</p>
-                    <p className="text-xs text-gray-500">{formatDateTime(sale.created_at)}</p>
+                    <p className="text-sm font-medium">{sale.customer_name ?? tr("dashboard.walkin")}</p>
+                    <p className="text-xs text-muted">{formatDateTime(sale.created_at)}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-semibold">{formatCurrency(sale.total_amount)}</p>
@@ -131,32 +132,31 @@ export default function DashboardPage() {
             </div>
           </Card>
 
-          {/* Active Operations */}
-          <Card title="Active Operations" subtitle="Dry room & dropship status">
+          <Card title={tr("dashboard.activeOperations")} subtitle={tr("dashboard.dryDropStatus")}>
             <div className="space-y-4">
               <div>
-                <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-1.5">
-                  <Wind className="w-4 h-4" /> Dry Room ({activeBatches.length} active)
+                <h4 className="text-sm font-medium text-muted mb-2 flex items-center gap-1.5">
+                  <Wind className="w-4 h-4" /> {tr("dashboard.dryRoom")} ({activeBatches.length} {tr("dashboard.active")})
                 </h4>
                 {activeBatches.map((batch) => (
-                  <div key={batch.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                  <div key={batch.id} className="flex items-center justify-between py-2 border-b border-card-border last:border-0">
                     <div>
                       <p className="text-sm font-medium">{batch.batch_name}</p>
-                      <p className="text-xs text-gray-500">{batch.strain}</p>
+                      <p className="text-xs text-muted">{batch.strain}</p>
                     </div>
                     <StatusBadge status={batch.status} />
                   </div>
                 ))}
               </div>
               <div>
-                <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-1.5">
-                  <TrendingUp className="w-4 h-4" /> Pending Dropship ({pendingDropship.length})
+                <h4 className="text-sm font-medium text-muted mb-2 flex items-center gap-1.5">
+                  <TrendingUp className="w-4 h-4" /> {tr("dashboard.pendingDropship")} ({pendingDropship.length})
                 </h4>
                 {pendingDropship.map((order) => (
-                  <div key={order.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                  <div key={order.id} className="flex items-center justify-between py-2 border-b border-card-border last:border-0">
                     <div>
                       <p className="text-sm font-medium">{order.order_number}</p>
-                      <p className="text-xs text-gray-500">{order.customer_name}</p>
+                      <p className="text-xs text-muted">{order.customer_name}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-semibold">{formatCurrency(order.total_amount)}</p>

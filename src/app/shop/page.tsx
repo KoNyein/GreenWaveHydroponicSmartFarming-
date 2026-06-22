@@ -4,10 +4,14 @@ import { useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card } from "@/components/ui/Card";
 import { formatCurrency } from "@/lib/utils";
+import { useSettingsStore } from "@/lib/store";
+import { t } from "@/lib/translations";
 import { mockProducts } from "@/lib/mock-data";
 import { Search, ShoppingBag, Tag, Eye, Truck } from "lucide-react";
 
 export default function ShopPage() {
+  const { locale } = useSettingsStore();
+  const tr = (key: string) => t(key, locale);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
@@ -22,8 +26,8 @@ export default function ShopPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold">Shop</h1>
-          <p className="text-gray-500 text-sm mt-1">Browse and manage products</p>
+          <h1 className="text-2xl font-bold">{tr("shop.title")}</h1>
+          <p className="text-muted text-sm mt-1">{tr("shop.subtitle")}</p>
         </div>
 
         <div className="flex flex-wrap gap-3">
@@ -33,7 +37,7 @@ export default function ShopPage() {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search products..."
+              placeholder={tr("shop.searchProducts")}
               className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary"
             />
           </div>

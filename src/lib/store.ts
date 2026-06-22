@@ -51,3 +51,23 @@ export const useSidebarStore = create<SidebarState>((set) => ({
   isCollapsed: false,
   toggle: () => set((state) => ({ isCollapsed: !state.isCollapsed })),
 }));
+
+type Theme = "light" | "dark";
+type Locale = "en" | "my";
+
+interface SettingsState {
+  theme: Theme;
+  locale: Locale;
+  setTheme: (theme: Theme) => void;
+  toggleTheme: () => void;
+  setLocale: (locale: Locale) => void;
+}
+
+export const useSettingsStore = create<SettingsState>((set) => ({
+  theme: "light",
+  locale: "en",
+  setTheme: (theme) => set({ theme }),
+  toggleTheme: () =>
+    set((state) => ({ theme: state.theme === "light" ? "dark" : "light" })),
+  setLocale: (locale) => set({ locale }),
+}));

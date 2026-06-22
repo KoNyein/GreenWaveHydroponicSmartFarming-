@@ -4,6 +4,8 @@ import { useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, StatCard } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/ui/StatusBadge";
+import { useSettingsStore } from "@/lib/store";
+import { t } from "@/lib/translations";
 import { mockZones, mockSensorReadings, mockSchedules, generateSensorHistory } from "@/lib/mock-data";
 import type { FarmZone } from "@/types/database";
 import {
@@ -30,6 +32,8 @@ import {
 } from "recharts";
 
 export default function FarmPage() {
+  const { locale } = useSettingsStore();
+  const tr = (key: string) => t(key, locale);
   const [selectedZone, setSelectedZone] = useState<FarmZone>(mockZones[0]);
   const reading = mockSensorReadings.find((r) => r.zone_id === selectedZone.id);
   const zoneSchedules = mockSchedules.filter((s) => s.zone_id === selectedZone.id);
@@ -56,8 +60,8 @@ export default function FarmPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold">Farm Monitor</h1>
-          <p className="text-gray-500 text-sm mt-1">Monitor and control your hydroponic zones</p>
+          <h1 className="text-2xl font-bold">{tr("farm.title")}</h1>
+          <p className="text-muted text-sm mt-1">{tr("farm.subtitle")}</p>
         </div>
 
         {/* Zone Tabs */}
@@ -81,43 +85,43 @@ export default function FarmPage() {
         {reading && (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
             <StatCard
-              label="Temperature"
+              label={tr("farm.temperature")}
               value={`${reading.temperature.toFixed(1)}°C`}
               icon={<Thermometer className="w-4 h-4" />}
               color="bg-red-500"
             />
             <StatCard
-              label="Humidity"
+              label={tr("farm.humidity")}
               value={`${reading.humidity.toFixed(1)}%`}
               icon={<Droplets className="w-4 h-4" />}
               color="bg-blue-500"
             />
             <StatCard
-              label="pH Level"
+              label={tr("farm.phLevel")}
               value={reading.ph_level.toFixed(2)}
               icon={<Beaker className="w-4 h-4" />}
               color="bg-yellow-500"
             />
             <StatCard
-              label="EC Level"
+              label={tr("farm.ecLevel")}
               value={`${reading.ec_level.toFixed(2)} mS`}
               icon={<Zap className="w-4 h-4" />}
               color="bg-purple-500"
             />
             <StatCard
-              label="Water Level"
+              label={tr("farm.waterLevel")}
               value={`${reading.water_level.toFixed(0)}%`}
               icon={<Waves className="w-4 h-4" />}
               color="bg-teal-500"
             />
             <StatCard
-              label="Light"
+              label={tr("farm.light")}
               value={`${reading.light_intensity.toFixed(0)} lux`}
               icon={<Sun className="w-4 h-4" />}
               color="bg-orange-500"
             />
             <StatCard
-              label="Nutrient PPM"
+              label={tr("farm.nutrientPpm")}
               value={reading.nutrient_ppm.toFixed(0)}
               icon={<Beaker className="w-4 h-4" />}
               color="bg-green-600"
@@ -127,7 +131,7 @@ export default function FarmPage() {
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card title="Temperature & Humidity (24h)">
+          <Card title={tr("farm.tempHumidity24h")}>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData}>
@@ -143,7 +147,7 @@ export default function FarmPage() {
             </div>
           </Card>
 
-          <Card title="pH & Water Level (24h)">
+          <Card title={tr("farm.phWater24h")}>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData}>
@@ -163,7 +167,7 @@ export default function FarmPage() {
         {/* Controls & Schedules */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Quick Controls */}
-          <Card title="Quick Controls" subtitle={`Zone: ${selectedZone.name}`}>
+          <Card title={tr("farm.quickControls")} subtitle={`${tr("farm.zone")}: ${selectedZone.name}`}>
             <div className="grid grid-cols-2 gap-3">
               {[
                 { label: "Water Pump", icon: Droplets, active: true, color: "blue" },
@@ -195,10 +199,10 @@ export default function FarmPage() {
           </Card>
 
           {/* Schedules */}
-          <Card title="Automation Schedules" subtitle="Configured tasks for this zone">
+          <Card title={tr("farm.automationSchedules")} subtitle={tr("farm.configuredTasks")}>
             <div className="space-y-3">
               {zoneSchedules.length === 0 ? (
-                <p className="text-sm text-gray-500 text-center py-4">No schedules for this zone</p>
+                <p className="text-sm text-muted text-center py-4">{tr("farm.noSchedules")}</p>
               ) : (
                 zoneSchedules.map((schedule) => (
                   <div key={schedule.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">

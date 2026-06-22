@@ -4,6 +4,8 @@ import { useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/ui/StatusBadge";
+import { useSettingsStore } from "@/lib/store";
+import { t } from "@/lib/translations";
 import { mockCameras } from "@/lib/mock-data";
 import type { Camera } from "@/types/database";
 import { Camera as CameraIcon, Maximize2, Grid3X3, LayoutGrid, Radio } from "lucide-react";
@@ -12,10 +14,14 @@ function CameraFeed({
   camera,
   large = false,
   onSelect,
+  liveFeedLabel,
+  offlineLabel,
 }: {
   camera: Camera;
   large?: boolean;
   onSelect: (camera: Camera) => void;
+  liveFeedLabel: string;
+  offlineLabel: string;
 }) {
   return (
     <div
@@ -28,7 +34,7 @@ function CameraFeed({
         {camera.is_online ? (
           <div className="text-center">
             <CameraIcon className="w-12 h-12 text-gray-600 mx-auto mb-2" />
-            <p className="text-gray-500 text-sm">Live Feed - {camera.name}</p>
+            <p className="text-gray-500 text-sm">{liveFeedLabel} - {camera.name}</p>
             <div className="flex items-center justify-center gap-1 mt-2">
               <Radio className="w-3 h-3 text-red-500 animate-pulse" />
               <span className="text-red-400 text-xs font-medium">LIVE</span>
@@ -37,7 +43,7 @@ function CameraFeed({
         ) : (
           <div className="text-center">
             <CameraIcon className="w-12 h-12 text-gray-700 mx-auto mb-2" />
-            <p className="text-gray-600 text-sm">Camera Offline</p>
+            <p className="text-gray-600 text-sm">{offlineLabel}</p>
           </div>
         )}
       </div>
@@ -64,6 +70,8 @@ function CameraFeed({
 }
 
 export default function CCTVPage() {
+  const { locale } = useSettingsStore();
+  const tr = (key: string) => t(key, locale);
   const [selectedCamera, setSelectedCamera] = useState<Camera | null>(null);
   const [layout, setLayout] = useState<"grid" | "single">("grid");
 
@@ -77,9 +85,9 @@ export default function CCTVPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">CCTV Monitoring</h1>
-            <p className="text-gray-500 text-sm mt-1">
-              {mockCameras.filter((c) => c.is_online).length} of {mockCameras.length} cameras online
+            <h1 className="text-2xl font-bold">{tr("cctv.title")}</h1>
+            <p className="text-muted text-sm mt-1">
+              {mockCameras.filter((c) => c.is_online).length} {tr("common.of")} {mockCameras.length} {tr("cctv.camerasOnline")}
             </p>
           </div>
           <div className="flex gap-2">
@@ -101,16 +109,16 @@ export default function CCTVPage() {
         {layout === "grid" ? (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {mockCameras.map((camera) => (
-              <CameraFeed key={camera.id} camera={camera} onSelect={handleSelect} />
+              <CameraFeed key={camera.id} camera={camera} onSelect={handleSelect} liveFeedLabel={tr("cctv.liveFeed")} offlineLabel={tr("cctv.cameraOffline")} />
             ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
             <div className="lg:col-span-3">
-              <CameraFeed camera={selectedCamera ?? mockCameras[0]} large onSelect={handleSelect} />
+              <CameraFeed camera={selectedCamera ?? mockCameras[0]} large onSelect={handleSelect} liveFeedLabel={tr("cctv.liveFeed")} offlineLabel={tr("cctv.cameraOffline")} />
             </div>
             <div className="space-y-3">
-              <Card title="Camera List">
+              <Card title={tr("cctv.cameraList")}>
                 <div className="space-y-2">
                   {mockCameras.map((camera) => (
                     <button

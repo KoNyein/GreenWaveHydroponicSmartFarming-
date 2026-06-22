@@ -5,30 +5,34 @@ import { Card, StatCard } from "@/components/ui/Card";
 import { DataTable } from "@/components/ui/DataTable";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { formatDate } from "@/lib/utils";
+import { useSettingsStore } from "@/lib/store";
+import { t } from "@/lib/translations";
 import { mockDryRoomBatches } from "@/lib/mock-data";
 import type { DryRoomBatch } from "@/types/database";
 import { Wind, Thermometer, Droplets, Plus, Scale } from "lucide-react";
 
 export default function DryRoomPage() {
+  const { locale } = useSettingsStore();
+  const tr = (key: string) => t(key, locale);
   const activeBatches = mockDryRoomBatches.filter((b) => b.status === "drying" || b.status === "curing");
   const completedBatches = mockDryRoomBatches.filter((b) => b.status === "completed");
   const totalWet = mockDryRoomBatches.reduce((s, b) => s + b.wet_weight_g, 0);
   const totalDry = mockDryRoomBatches.reduce((s, b) => s + (b.dry_weight_g ?? 0), 0);
 
   const columns = [
-    { key: "batch_name", label: "Batch", render: (b: DryRoomBatch) => <span className="font-medium">{b.batch_name}</span> },
-    { key: "strain", label: "Strain" },
-    { key: "wet_weight_g", label: "Wet Weight", render: (b: DryRoomBatch) => `${b.wet_weight_g.toLocaleString()}g` },
-    { key: "dry_weight_g", label: "Dry Weight", render: (b: DryRoomBatch) => b.dry_weight_g ? `${b.dry_weight_g.toLocaleString()}g` : "In progress" },
+    { key: "batch_name", label: tr("dryroom.batch"), render: (b: DryRoomBatch) => <span className="font-medium">{b.batch_name}</span> },
+    { key: "strain", label: tr("dryroom.strain") },
+    { key: "wet_weight_g", label: tr("dryroom.wetWeight"), render: (b: DryRoomBatch) => `${b.wet_weight_g.toLocaleString()}g` },
+    { key: "dry_weight_g", label: tr("dryroom.dryWeight"), render: (b: DryRoomBatch) => b.dry_weight_g ? `${b.dry_weight_g.toLocaleString()}g` : tr("dryroom.inProgress") },
     {
       key: "yield",
-      label: "Yield %",
+      label: tr("dryroom.yield"),
       render: (b: DryRoomBatch) =>
         b.dry_weight_g ? `${((b.dry_weight_g / b.wet_weight_g) * 100).toFixed(1)}%` : "-",
     },
     {
       key: "conditions",
-      label: "Conditions",
+      label: tr("dryroom.conditions"),
       render: (b: DryRoomBatch) => (
         <div className="flex items-center gap-3 text-xs">
           <span className="flex items-center gap-1"><Thermometer className="w-3 h-3 text-red-500" />{b.temperature}°C</span>
@@ -36,8 +40,8 @@ export default function DryRoomPage() {
         </div>
       ),
     },
-    { key: "status", label: "Status", render: (b: DryRoomBatch) => <StatusBadge status={b.status} /> },
-    { key: "start_date", label: "Started", render: (b: DryRoomBatch) => formatDate(b.start_date) },
+    { key: "status", label: tr("dryroom.status"), render: (b: DryRoomBatch) => <StatusBadge status={b.status} /> },
+    { key: "start_date", label: tr("dryroom.started"), render: (b: DryRoomBatch) => formatDate(b.start_date) },
     { key: "end_date", label: "Completed", render: (b: DryRoomBatch) => b.end_date ? formatDate(b.end_date) : "-" },
   ];
 
@@ -46,8 +50,8 @@ export default function DryRoomPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Dry Room</h1>
-            <p className="text-gray-500 text-sm mt-1">Manage drying and curing batches</p>
+            <h1 className="text-2xl font-bold">{tr("dryroom.title")}</h1>
+            <p className="text-muted text-sm mt-1">{tr("dryroom.subtitle")}</p>
           </div>
           <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-dark transition">
             <Plus className="w-4 h-4" /> New Batch

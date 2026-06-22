@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { useSidebarStore } from "@/lib/store";
+import { useSidebarStore, useSettingsStore } from "@/lib/store";
+import { t } from "@/lib/translations";
 import {
   LayoutDashboard,
   Leaf,
@@ -21,24 +22,27 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/farm", label: "Farm Monitor", icon: Leaf },
-  { href: "/cctv", label: "CCTV", icon: Camera },
-  { href: "/pos", label: "POS System", icon: ShoppingCart },
-  { href: "/inventory", label: "Inventory", icon: Package },
-  { href: "/dry-room", label: "Dry Room", icon: Wind },
-  { href: "/store-room", label: "Store Room", icon: Warehouse },
-  { href: "/sales", label: "Sales Records", icon: BarChart3 },
-  { href: "/shop", label: "Shop", icon: Store },
-  { href: "/affiliate", label: "Affiliate", icon: Link2 },
-  { href: "/shop/dropship", label: "Dropship", icon: Truck },
-  { href: "/members", label: "Members", icon: Users },
-];
-
 export default function Sidebar() {
   const pathname = usePathname();
   const { isCollapsed, toggle } = useSidebarStore();
+  const { locale } = useSettingsStore();
+
+  const tr = (key: string) => t(key, locale);
+
+  const navItems = [
+    { href: "/dashboard", label: tr("nav.dashboard"), icon: LayoutDashboard },
+    { href: "/farm", label: tr("nav.farm"), icon: Leaf },
+    { href: "/cctv", label: tr("nav.cctv"), icon: Camera },
+    { href: "/pos", label: tr("nav.pos"), icon: ShoppingCart },
+    { href: "/inventory", label: tr("nav.inventory"), icon: Package },
+    { href: "/dry-room", label: tr("nav.dryroom"), icon: Wind },
+    { href: "/store-room", label: tr("nav.storeroom"), icon: Warehouse },
+    { href: "/sales", label: tr("nav.sales"), icon: BarChart3 },
+    { href: "/shop", label: tr("nav.shop"), icon: Store },
+    { href: "/affiliate", label: tr("nav.affiliate"), icon: Link2 },
+    { href: "/shop/dropship", label: tr("nav.dropship"), icon: Truck },
+    { href: "/members", label: tr("nav.members"), icon: Users },
+  ];
 
   return (
     <aside
@@ -47,20 +51,18 @@ export default function Sidebar() {
         isCollapsed ? "w-16" : "w-64"
       )}
     >
-      {/* Logo */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-white/10">
         <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center flex-shrink-0">
           <Leaf className="w-5 h-5 text-white" />
         </div>
         {!isCollapsed && (
           <div className="overflow-hidden">
-            <h1 className="text-sm font-bold text-white leading-tight">GreenWave</h1>
-            <p className="text-[10px] text-slate-400">Hydroponic Smart Farm</p>
+            <h1 className="text-sm font-bold text-white leading-tight">{tr("app.name")}</h1>
+            <p className="text-[10px] text-slate-400">{tr("app.subtitle")}</p>
           </div>
         )}
       </div>
 
-      {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
@@ -84,7 +86,6 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Collapse Button */}
       <button
         onClick={toggle}
         className="flex items-center justify-center py-3 border-t border-white/10 text-slate-400 hover:text-white transition"

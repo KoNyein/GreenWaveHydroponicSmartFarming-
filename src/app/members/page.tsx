@@ -5,6 +5,8 @@ import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, StatCard } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { formatDate } from "@/lib/utils";
+import { useSettingsStore } from "@/lib/store";
+import { t } from "@/lib/translations";
 import type { Profile } from "@/types/database";
 import { Users, UserPlus, Shield, Search, Mail, Phone } from "lucide-react";
 
@@ -24,6 +26,8 @@ const roleColors: Record<string, string> = {
 };
 
 export default function MembersPage() {
+  const { locale } = useSettingsStore();
+  const tr = (key: string) => t(key, locale);
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
 
@@ -43,18 +47,18 @@ export default function MembersPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Members</h1>
-            <p className="text-gray-500 text-sm mt-1">Manage registered members and access control</p>
+            <h1 className="text-2xl font-bold">{tr("members.title")}</h1>
+            <p className="text-muted text-sm mt-1">{tr("members.subtitle")}</p>
           </div>
           <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-dark transition">
-            <UserPlus className="w-4 h-4" /> Add Member
+            <UserPlus className="w-4 h-4" /> {tr("members.addMember")}
           </button>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <StatCard label="Total Members" value={mockMembers.length} icon={<Users className="w-5 h-5" />} />
-          <StatCard label="Active Members" value={activeMembers.length} icon={<Users className="w-5 h-5" />} color="bg-green-600" />
-          <StatCard label="Admin/Managers" value={admins.length} icon={<Shield className="w-5 h-5" />} color="bg-blue-500" />
+          <StatCard label={tr("members.totalMembers")} value={mockMembers.length} icon={<Users className="w-5 h-5" />} />
+          <StatCard label={tr("members.activeMembers")} value={activeMembers.length} icon={<Users className="w-5 h-5" />} color="bg-green-600" />
+          <StatCard label={tr("members.adminManagers")} value={admins.length} icon={<Shield className="w-5 h-5" />} color="bg-blue-500" />
         </div>
 
         <Card>
@@ -65,7 +69,7 @@ export default function MembersPage() {
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search members..."
+                placeholder={tr("members.searchMembers")}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
@@ -113,7 +117,7 @@ export default function MembersPage() {
                     {member.role}
                   </span>
                   <StatusBadge status={member.is_active ? "active" : "inactive"} />
-                  <span className="text-xs text-gray-400">Joined {formatDate(member.created_at)}</span>
+                  <span className="text-xs text-muted">{tr("members.joined")} {formatDate(member.created_at)}</span>
                 </div>
               </div>
             ))}
