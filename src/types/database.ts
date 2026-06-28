@@ -261,3 +261,28 @@ export interface FarmSchedule {
   last_executed: string | null;
   created_at: string;
 }
+
+export interface WallPost {
+  id: string;
+  author_id: string;
+  author_name: string;
+  author_avatar: string | null;
+  author_role: Profile["role"];
+  wall_owner_id: string;
+  content: string;
+  image_url: string | null;
+  likes: number;
+  comments_count: number;
+  created_at: string;
+}
+
+export interface MemberSubscription {
+  id: string;
+  user_id: string;
+  plan: "free_trial" | "basic" | "pro" | "enterprise";
+  status: "active" | "expired" | "cancelled";
+  trial_start: string;
+  trial_end: string;
+  features: string[];
+  created_at: string;
+}

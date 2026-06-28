@@ -20,6 +20,8 @@ import {
   Truck,
   ChevronLeft,
   ChevronRight,
+  UserCircle,
+  Crown,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -42,6 +44,8 @@ export default function Sidebar() {
     { href: "/affiliate", label: tr("nav.affiliate"), icon: Link2 },
     { href: "/shop/dropship", label: tr("nav.dropship"), icon: Truck },
     { href: "/members", label: tr("nav.members"), icon: Users },
+    { href: "/profile", label: tr("profile.myProfile"), icon: UserCircle },
+    { href: "/subscription", label: tr("trial.pricing"), icon: Crown },
   ];
 
   return (

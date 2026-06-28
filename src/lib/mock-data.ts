@@ -12,6 +12,8 @@ import type {
   DropshipOrder,
   FarmSchedule,
   Profile,
+  WallPost,
+  MemberSubscription,
 } from "@/types/database";
 
 const uuid = (n: number) => `00000000-0000-0000-0000-${String(n).padStart(12, "0")}`;
@@ -117,6 +119,34 @@ export const mockSchedules: FarmSchedule[] = [
   { id: uuid(122), zone_id: uuid(12), action_type: "light_on", scheduled_time: "18:00:00", is_recurring: true, recurrence_interval: "daily", is_active: true, last_executed: "2025-06-21T18:00:00Z", created_at: "2025-01-01T00:00:00Z" },
   { id: uuid(123), zone_id: uuid(12), action_type: "light_off", scheduled_time: "06:00:00", is_recurring: true, recurrence_interval: "daily", is_active: true, last_executed: "2025-06-21T06:00:00Z", created_at: "2025-01-01T00:00:00Z" },
   { id: uuid(124), zone_id: uuid(11), action_type: "ph_adjust", scheduled_time: "12:00:00", is_recurring: true, recurrence_interval: "weekly", is_active: false, last_executed: null, created_at: "2025-01-01T00:00:00Z" },
+];
+
+export const mockMemberProfiles: Profile[] = [
+  { id: uuid(1), email: "admin@greenwave.farm", full_name: "Admin User", role: "admin", avatar_url: null, phone: "+1234567890", is_active: true, affiliate_code: "GW-ADMIN", created_at: "2025-01-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
+  { id: uuid(2), email: "mike@greenwave.farm", full_name: "Mike Johnson", role: "manager", avatar_url: null, phone: "+1234567891", is_active: true, affiliate_code: "GW-MIKE", created_at: "2025-02-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
+  { id: uuid(3), email: "sarah@greenwave.farm", full_name: "Sarah Williams", role: "staff", avatar_url: null, phone: "+1234567892", is_active: true, affiliate_code: null, created_at: "2025-03-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
+  { id: uuid(4), email: "john@example.com", full_name: "John Doe", role: "member", avatar_url: null, phone: "+1234567893", is_active: true, affiliate_code: "GW-JOHN", created_at: "2025-04-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
+  { id: uuid(5), email: "jane@example.com", full_name: "Jane Smith", role: "member", avatar_url: null, phone: null, is_active: false, affiliate_code: null, created_at: "2025-05-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
+  { id: uuid(6), email: "aung@greenwave.farm", full_name: "Aung Kyaw", role: "member", avatar_url: null, phone: "+959123456", is_active: true, affiliate_code: "GW-AUNG", created_at: "2025-03-15T00:00:00Z", updated_at: "2025-06-10T00:00:00Z" },
+  { id: uuid(7), email: "thandar@greenwave.farm", full_name: "Thandar Win", role: "member", avatar_url: null, phone: "+959789012", is_active: true, affiliate_code: null, created_at: "2025-04-10T00:00:00Z", updated_at: "2025-06-15T00:00:00Z" },
+];
+
+export const mockWallPosts: WallPost[] = [
+  { id: uuid(200), author_id: uuid(1), author_name: "Admin User", author_avatar: null, author_role: "admin", wall_owner_id: uuid(1), content: "Just upgraded our hydroponic system to the latest nutrient delivery setup. Results looking amazing! 🌿", image_url: null, likes: 12, comments_count: 3, created_at: "2025-06-20T10:30:00Z" },
+  { id: uuid(201), author_id: uuid(2), author_name: "Mike Johnson", author_avatar: null, author_role: "manager", wall_owner_id: uuid(2), content: "Zone C flowering stage looking incredible this cycle. Best trichome coverage we've seen!", image_url: null, likes: 8, comments_count: 5, created_at: "2025-06-19T14:20:00Z" },
+  { id: uuid(202), author_id: uuid(4), author_name: "John Doe", author_avatar: null, author_role: "member", wall_owner_id: uuid(4), content: "Started my first hydroponic grow at home using GreenWave techniques. Any tips for seedling stage?", image_url: null, likes: 15, comments_count: 7, created_at: "2025-06-18T09:15:00Z" },
+  { id: uuid(203), author_id: uuid(3), author_name: "Sarah Williams", author_avatar: null, author_role: "staff", wall_owner_id: uuid(3), content: "pH levels have been super stable this week across all zones. Great teamwork everyone! 💪", image_url: null, likes: 20, comments_count: 2, created_at: "2025-06-17T16:45:00Z" },
+  { id: uuid(204), author_id: uuid(6), author_name: "Aung Kyaw", author_avatar: null, author_role: "member", wall_owner_id: uuid(6), content: "Myanmar ရဲ့ ပထမဆုံး hydroponic farm ကို GreenWave system နဲ့ စတင်ခဲ့ပါတယ်။ အရမ်းကောင်းပါတယ်!", image_url: null, likes: 25, comments_count: 10, created_at: "2025-06-16T11:00:00Z" },
+  { id: uuid(205), author_id: uuid(7), author_name: "Thandar Win", author_avatar: null, author_role: "member", wall_owner_id: uuid(7), content: "Just completed the 14-day trial and absolutely love the POS system. Upgrading to Pro plan now!", image_url: null, likes: 6, comments_count: 1, created_at: "2025-06-15T08:30:00Z" },
+  { id: uuid(206), author_id: uuid(1), author_name: "Admin User", author_avatar: null, author_role: "admin", wall_owner_id: uuid(4), content: "Welcome to GreenWave, John! For seedlings, keep pH between 5.5-6.0 and humidity around 70%. Good luck!", image_url: null, likes: 5, comments_count: 0, created_at: "2025-06-18T11:30:00Z" },
+];
+
+export const mockSubscriptions: MemberSubscription[] = [
+  { id: uuid(300), user_id: uuid(1), plan: "enterprise", status: "active", trial_start: "2025-01-01", trial_end: "2025-01-14", features: ["pos", "hydroponic", "cctv", "inventory", "dry_room", "store_room", "sales", "shop", "dropship", "affiliate"], created_at: "2025-01-01T00:00:00Z" },
+  { id: uuid(301), user_id: uuid(4), plan: "free_trial", status: "active", trial_start: "2025-06-10", trial_end: "2025-06-24", features: ["pos", "hydroponic"], created_at: "2025-06-10T00:00:00Z" },
+  { id: uuid(302), user_id: uuid(5), plan: "free_trial", status: "expired", trial_start: "2025-05-01", trial_end: "2025-05-15", features: ["pos", "hydroponic"], created_at: "2025-05-01T00:00:00Z" },
+  { id: uuid(303), user_id: uuid(6), plan: "pro", status: "active", trial_start: "2025-03-15", trial_end: "2025-03-29", features: ["pos", "hydroponic", "cctv", "inventory", "dry_room", "store_room"], created_at: "2025-03-15T00:00:00Z" },
+  { id: uuid(304), user_id: uuid(7), plan: "basic", status: "active", trial_start: "2025-04-10", trial_end: "2025-04-24", features: ["pos", "hydroponic"], created_at: "2025-04-10T00:00:00Z" },
 ];
 
 export function generateSensorHistory(zoneId: string, hours: number = 24): SensorReading[] {
