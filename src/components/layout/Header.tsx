@@ -57,11 +57,11 @@ export default function Header() {
 
         {/* User */}
         <div className="flex items-center gap-3 pl-3 border-l border-card-border">
-          <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+          <Link href="/profile" className="w-8 h-8 bg-primary rounded-full flex items-center justify-center hover:ring-2 hover:ring-primary/30 transition">
             <User className="w-4 h-4 text-white" />
-          </div>
+          </Link>
           <div className="hidden sm:block">
-            <p className="text-sm font-medium">{user?.full_name ?? tr("common.guest")}</p>
+            <Link href="/profile" className="text-sm font-medium hover:underline">{user?.full_name ?? tr("common.guest")}</Link>
             <p className="text-xs text-muted capitalize">{user?.role ?? "member"}</p>
           </div>
           <Link

@@ -8,15 +8,12 @@ import { formatDate } from "@/lib/utils";
 import { useSettingsStore } from "@/lib/store";
 import { t } from "@/lib/translations";
 import type { Profile } from "@/types/database";
-import { Users, UserPlus, Shield, Search, Mail, Phone } from "lucide-react";
+import { Users, UserPlus, Shield, Search, Mail, Phone, ExternalLink } from "lucide-react";
+import Link from "next/link";
 
-const mockMembers: Profile[] = [
-  { id: "1", email: "admin@greenwave.farm", full_name: "Admin User", role: "admin", avatar_url: null, phone: "+1234567890", is_active: true, affiliate_code: "GW-ADMIN", created_at: "2025-01-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
-  { id: "2", email: "mike@greenwave.farm", full_name: "Mike Johnson", role: "manager", avatar_url: null, phone: "+1234567891", is_active: true, affiliate_code: "GW-MIKE", created_at: "2025-02-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
-  { id: "3", email: "sarah@greenwave.farm", full_name: "Sarah Williams", role: "staff", avatar_url: null, phone: "+1234567892", is_active: true, affiliate_code: null, created_at: "2025-03-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
-  { id: "4", email: "john@example.com", full_name: "John Doe", role: "member", avatar_url: null, phone: "+1234567893", is_active: true, affiliate_code: "GW-JOHN", created_at: "2025-04-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
-  { id: "5", email: "jane@example.com", full_name: "Jane Smith", role: "member", avatar_url: null, phone: null, is_active: false, affiliate_code: null, created_at: "2025-05-01T00:00:00Z", updated_at: "2025-06-01T00:00:00Z" },
-];
+import { mockMemberProfiles } from "@/lib/mock-data";
+
+const mockMembers = mockMemberProfiles;
 
 const roleColors: Record<string, string> = {
   admin: "bg-red-100 text-red-800",
@@ -118,6 +115,12 @@ export default function MembersPage() {
                   </span>
                   <StatusBadge status={member.is_active ? "active" : "inactive"} />
                   <span className="text-xs text-muted">{tr("members.joined")} {formatDate(member.created_at)}</span>
+                  <Link
+                    href={`/profile/${member.id}`}
+                    className="flex items-center gap-1 text-xs text-primary hover:underline"
+                  >
+                    <ExternalLink className="w-3 h-3" /> {tr("profile.visitProfile")}
+                  </Link>
                 </div>
               </div>
             ))}
