@@ -14,6 +14,7 @@ import type {
   Profile,
   WallPost,
   MemberSubscription,
+  Friendship,
 } from "@/types/database";
 
 const uuid = (n: number) => `00000000-0000-0000-0000-${String(n).padStart(12, "0")}`;
@@ -131,14 +132,117 @@ export const mockMemberProfiles: Profile[] = [
   { id: uuid(7), email: "thandar@greenwave.farm", full_name: "Thandar Win", role: "member", avatar_url: null, phone: "+959789012", is_active: true, affiliate_code: null, created_at: "2025-04-10T00:00:00Z", updated_at: "2025-06-15T00:00:00Z" },
 ];
 
+export const mockFriendships: Friendship[] = [
+  { id: uuid(400), user_id: uuid(1), friend_id: uuid(2), status: "accepted", created_at: "2025-01-15T00:00:00Z" },
+  { id: uuid(401), user_id: uuid(1), friend_id: uuid(3), status: "accepted", created_at: "2025-02-01T00:00:00Z" },
+  { id: uuid(402), user_id: uuid(1), friend_id: uuid(4), status: "accepted", created_at: "2025-04-05T00:00:00Z" },
+  { id: uuid(403), user_id: uuid(1), friend_id: uuid(6), status: "accepted", created_at: "2025-03-20T00:00:00Z" },
+  { id: uuid(404), user_id: uuid(2), friend_id: uuid(3), status: "accepted", created_at: "2025-02-10T00:00:00Z" },
+  { id: uuid(405), user_id: uuid(4), friend_id: uuid(6), status: "accepted", created_at: "2025-04-15T00:00:00Z" },
+  { id: uuid(406), user_id: uuid(4), friend_id: uuid(7), status: "pending", created_at: "2025-06-01T00:00:00Z" },
+  { id: uuid(407), user_id: uuid(6), friend_id: uuid(7), status: "accepted", created_at: "2025-05-01T00:00:00Z" },
+];
+
+export function areFriends(userId: string, otherId: string): boolean {
+  return mockFriendships.some(
+    (f) =>
+      f.status === "accepted" &&
+      ((f.user_id === userId && f.friend_id === otherId) ||
+        (f.user_id === otherId && f.friend_id === userId))
+  );
+}
+
+export function getVisiblePosts(posts: WallPost[], viewerId: string, wallOwnerId: string): WallPost[] {
+  return posts.filter((post) => {
+    if (post.visibility === "public") return true;
+    if (post.author_id === viewerId) return true;
+    if (post.wall_owner_id === viewerId) return true;
+    return areFriends(viewerId, post.author_id);
+  });
+}
+
 export const mockWallPosts: WallPost[] = [
-  { id: uuid(200), author_id: uuid(1), author_name: "Admin User", author_avatar: null, author_role: "admin", wall_owner_id: uuid(1), content: "Just upgraded our hydroponic system to the latest nutrient delivery setup. Results looking amazing! 🌿", image_url: null, likes: 12, comments_count: 3, created_at: "2025-06-20T10:30:00Z" },
-  { id: uuid(201), author_id: uuid(2), author_name: "Mike Johnson", author_avatar: null, author_role: "manager", wall_owner_id: uuid(2), content: "Zone C flowering stage looking incredible this cycle. Best trichome coverage we've seen!", image_url: null, likes: 8, comments_count: 5, created_at: "2025-06-19T14:20:00Z" },
-  { id: uuid(202), author_id: uuid(4), author_name: "John Doe", author_avatar: null, author_role: "member", wall_owner_id: uuid(4), content: "Started my first hydroponic grow at home using GreenWave techniques. Any tips for seedling stage?", image_url: null, likes: 15, comments_count: 7, created_at: "2025-06-18T09:15:00Z" },
-  { id: uuid(203), author_id: uuid(3), author_name: "Sarah Williams", author_avatar: null, author_role: "staff", wall_owner_id: uuid(3), content: "pH levels have been super stable this week across all zones. Great teamwork everyone! 💪", image_url: null, likes: 20, comments_count: 2, created_at: "2025-06-17T16:45:00Z" },
-  { id: uuid(204), author_id: uuid(6), author_name: "Aung Kyaw", author_avatar: null, author_role: "member", wall_owner_id: uuid(6), content: "Myanmar ရဲ့ ပထမဆုံး hydroponic farm ကို GreenWave system နဲ့ စတင်ခဲ့ပါတယ်။ အရမ်းကောင်းပါတယ်!", image_url: null, likes: 25, comments_count: 10, created_at: "2025-06-16T11:00:00Z" },
-  { id: uuid(205), author_id: uuid(7), author_name: "Thandar Win", author_avatar: null, author_role: "member", wall_owner_id: uuid(7), content: "Just completed the 14-day trial and absolutely love the POS system. Upgrading to Pro plan now!", image_url: null, likes: 6, comments_count: 1, created_at: "2025-06-15T08:30:00Z" },
-  { id: uuid(206), author_id: uuid(1), author_name: "Admin User", author_avatar: null, author_role: "admin", wall_owner_id: uuid(4), content: "Welcome to GreenWave, John! For seedlings, keep pH between 5.5-6.0 and humidity around 70%. Good luck!", image_url: null, likes: 5, comments_count: 0, created_at: "2025-06-18T11:30:00Z" },
+  {
+    id: uuid(200), author_id: uuid(1), author_name: "Admin User", author_avatar: null, author_role: "admin",
+    wall_owner_id: uuid(1), content: "Just upgraded our hydroponic system to the latest nutrient delivery setup. Results looking amazing! 🌿",
+    image_url: null, photos: ["https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=600", "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600"],
+    location: { lat: 16.8661, lng: 96.1951, name: "GreenWave Farm, Yangon" }, visibility: "public",
+    reactions: [
+      { user_id: uuid(2), user_name: "Mike Johnson", type: "love" },
+      { user_id: uuid(3), user_name: "Sarah Williams", type: "like" },
+      { user_id: uuid(4), user_name: "John Doe", type: "wow" },
+      { user_id: uuid(6), user_name: "Aung Kyaw", type: "love" },
+    ],
+    comments_count: 3, created_at: "2025-06-20T10:30:00Z",
+  },
+  {
+    id: uuid(201), author_id: uuid(2), author_name: "Mike Johnson", author_avatar: null, author_role: "manager",
+    wall_owner_id: uuid(2), content: "Zone C flowering stage looking incredible this cycle. Best trichome coverage we've seen!",
+    image_url: null, photos: ["https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=600"],
+    location: { lat: 16.8700, lng: 96.2000, name: "Zone C, GreenWave Farm" }, visibility: "friends",
+    reactions: [
+      { user_id: uuid(1), user_name: "Admin User", type: "like" },
+      { user_id: uuid(3), user_name: "Sarah Williams", type: "love" },
+    ],
+    comments_count: 5, created_at: "2025-06-19T14:20:00Z",
+  },
+  {
+    id: uuid(202), author_id: uuid(4), author_name: "John Doe", author_avatar: null, author_role: "member",
+    wall_owner_id: uuid(4), content: "Started my first hydroponic grow at home using GreenWave techniques. Any tips for seedling stage?",
+    image_url: null, photos: [],
+    location: { lat: 37.7749, lng: -122.4194, name: "San Francisco, CA" }, visibility: "public",
+    reactions: [
+      { user_id: uuid(1), user_name: "Admin User", type: "like" },
+      { user_id: uuid(6), user_name: "Aung Kyaw", type: "like" },
+      { user_id: uuid(7), user_name: "Thandar Win", type: "haha" },
+    ],
+    comments_count: 7, created_at: "2025-06-18T09:15:00Z",
+  },
+  {
+    id: uuid(203), author_id: uuid(3), author_name: "Sarah Williams", author_avatar: null, author_role: "staff",
+    wall_owner_id: uuid(3), content: "pH levels have been super stable this week across all zones. Great teamwork everyone! 💪",
+    image_url: null, photos: [],
+    location: null, visibility: "friends",
+    reactions: [
+      { user_id: uuid(1), user_name: "Admin User", type: "love" },
+      { user_id: uuid(2), user_name: "Mike Johnson", type: "like" },
+    ],
+    comments_count: 2, created_at: "2025-06-17T16:45:00Z",
+  },
+  {
+    id: uuid(204), author_id: uuid(6), author_name: "Aung Kyaw", author_avatar: null, author_role: "member",
+    wall_owner_id: uuid(6), content: "Myanmar ရဲ့ ပထမဆုံး hydroponic farm ကို GreenWave system နဲ့ စတင်ခဲ့ပါတယ်။ အရမ်းကောင်းပါတယ်!",
+    image_url: null, photos: ["https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600", "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=600", "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=600"],
+    location: { lat: 21.9162, lng: 95.9560, name: "Mandalay, Myanmar" }, visibility: "public",
+    reactions: [
+      { user_id: uuid(1), user_name: "Admin User", type: "love" },
+      { user_id: uuid(4), user_name: "John Doe", type: "wow" },
+      { user_id: uuid(7), user_name: "Thandar Win", type: "love" },
+      { user_id: uuid(2), user_name: "Mike Johnson", type: "like" },
+      { user_id: uuid(3), user_name: "Sarah Williams", type: "sad" },
+    ],
+    comments_count: 10, created_at: "2025-06-16T11:00:00Z",
+  },
+  {
+    id: uuid(205), author_id: uuid(7), author_name: "Thandar Win", author_avatar: null, author_role: "member",
+    wall_owner_id: uuid(7), content: "Just completed the 14-day trial and absolutely love the POS system. Upgrading to Pro plan now!",
+    image_url: null, photos: [],
+    location: null, visibility: "friends",
+    reactions: [
+      { user_id: uuid(6), user_name: "Aung Kyaw", type: "like" },
+    ],
+    comments_count: 1, created_at: "2025-06-15T08:30:00Z",
+  },
+  {
+    id: uuid(206), author_id: uuid(1), author_name: "Admin User", author_avatar: null, author_role: "admin",
+    wall_owner_id: uuid(4), content: "Welcome to GreenWave, John! For seedlings, keep pH between 5.5-6.0 and humidity around 70%. Good luck!",
+    image_url: null, photos: [],
+    location: null, visibility: "public",
+    reactions: [
+      { user_id: uuid(4), user_name: "John Doe", type: "love" },
+    ],
+    comments_count: 0, created_at: "2025-06-18T11:30:00Z",
+  },
 ];
 
 export const mockSubscriptions: MemberSubscription[] = [

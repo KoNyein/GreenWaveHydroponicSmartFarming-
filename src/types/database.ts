@@ -262,6 +262,22 @@ export interface FarmSchedule {
   created_at: string;
 }
 
+export type ReactionType = "like" | "love" | "haha" | "wow" | "sad" | "angry";
+
+export interface PostReaction {
+  user_id: string;
+  user_name: string;
+  type: ReactionType;
+}
+
+export interface PostLocation {
+  lat: number;
+  lng: number;
+  name: string;
+}
+
+export type PostVisibility = "public" | "friends";
+
 export interface WallPost {
   id: string;
   author_id: string;
@@ -271,8 +287,19 @@ export interface WallPost {
   wall_owner_id: string;
   content: string;
   image_url: string | null;
-  likes: number;
+  photos: string[];
+  location: PostLocation | null;
+  visibility: PostVisibility;
+  reactions: PostReaction[];
   comments_count: number;
+  created_at: string;
+}
+
+export interface Friendship {
+  id: string;
+  user_id: string;
+  friend_id: string;
+  status: "pending" | "accepted" | "rejected";
   created_at: string;
 }
 
