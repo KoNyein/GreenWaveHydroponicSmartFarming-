@@ -7,19 +7,16 @@ import { StatusBadge } from "@/components/ui/StatusBadge";
 import { formatDate, formatDateTime } from "@/lib/utils";
 import { useAuthStore, useSettingsStore } from "@/lib/store";
 import { t } from "@/lib/translations";
-import { mockWallPosts, mockSubscriptions, mockMemberProfiles } from "@/lib/mock-data";
+import { mockWallPosts, mockSubscriptions, mockMemberProfiles, getVisiblePosts } from "@/lib/mock-data";
+import PostComposer from "@/components/social/PostComposer";
+import WallPostCard from "@/components/social/WallPostCard";
 import Link from "next/link";
 import {
-  User,
   Mail,
   Phone,
   Calendar,
   Shield,
   Link2,
-  Heart,
-  MessageCircle,
-  Share2,
-  Send,
   Edit,
   Crown,
   Clock,
@@ -37,12 +34,12 @@ export default function ProfilePage() {
   const { locale } = useSettingsStore();
   const tr = (key: string) => t(key, locale);
   const [activeTab, setActiveTab] = useState<"wall" | "about">("wall");
-  const [newPost, setNewPost] = useState("");
 
   const profile = user ?? mockMemberProfiles[0];
-  const wallPosts = mockWallPosts.filter(
+  const allPosts = mockWallPosts.filter(
     (p) => p.wall_owner_id === profile.id || p.author_id === profile.id
   );
+  const wallPosts = getVisiblePosts(allPosts, profile.id, profile.id);
   const subscription = mockSubscriptions.find((s) => s.user_id === profile.id);
 
   const trialDaysRemaining = subscription
@@ -203,68 +200,21 @@ export default function ProfilePage() {
 
             {activeTab === "wall" && (
               <>
-                {/* New Post Input */}
-                <Card>
-                  <div className="flex gap-3">
-                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold flex-shrink-0">
-                      {profile.full_name.charAt(0)}
-                    </div>
-                    <div className="flex-1">
-                      <textarea
-                        value={newPost}
-                        onChange={(e) => setNewPost(e.target.value)}
-                        placeholder={tr("profile.writePost")}
-                        className="w-full p-3 border border-input-border bg-input-bg rounded-lg text-sm resize-none outline-none focus:ring-2 focus:ring-primary"
-                        rows={3}
-                      />
-                      <div className="flex justify-end mt-2">
-                        <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-dark transition">
-                          <Send className="w-4 h-4" /> {tr("profile.post")}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
+                <PostComposer authorInitial={profile.full_name.charAt(0)} tr={tr} />
 
-                {/* Posts */}
                 {wallPosts.length === 0 ? (
                   <Card>
                     <p className="text-center text-muted py-8">{tr("profile.noPostsYet")}</p>
                   </Card>
                 ) : (
                   wallPosts.map((post) => (
-                    <Card key={post.id}>
-                      <div className="flex gap-3">
-                        <Link href={`/profile/${post.author_id}`}>
-                          <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold flex-shrink-0">
-                            {post.author_name.charAt(0)}
-                          </div>
-                        </Link>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <Link href={`/profile/${post.author_id}`} className="font-medium text-sm hover:underline">
-                              {post.author_name}
-                            </Link>
-                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium capitalize ${roleColors[post.author_role]}`}>
-                              {post.author_role}
-                            </span>
-                            <span className="text-xs text-muted">{formatDateTime(post.created_at)}</span>
-                          </div>
-                          <p className="text-sm mt-2 leading-relaxed">{post.content}</p>
-                          <div className="flex items-center gap-6 mt-4 pt-3 border-t border-card-border">
-                            <button className="flex items-center gap-1.5 text-sm text-muted hover:text-red-500 transition">
-                              <Heart className="w-4 h-4" /> {post.likes} {tr("profile.like")}
-                            </button>
-                            <button className="flex items-center gap-1.5 text-sm text-muted hover:text-blue-500 transition">
-                              <MessageCircle className="w-4 h-4" /> {post.comments_count} {tr("profile.comment")}
-                            </button>
-                            <button className="flex items-center gap-1.5 text-sm text-muted hover:text-green-500 transition">
-                              <Share2 className="w-4 h-4" /> {tr("profile.share")}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
+                    <WallPostCard
+                      key={post.id}
+                      post={post}
+                      currentUserId={profile.id}
+                      tr={tr}
+                      formatDateTime={formatDateTime}
+                    />
                   ))
                 )}
               </>
