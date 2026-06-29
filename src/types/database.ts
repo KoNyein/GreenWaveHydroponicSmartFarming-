@@ -313,3 +313,43 @@ export interface MemberSubscription {
   features: string[];
   created_at: string;
 }
+
+export type MessageType = "text" | "photo" | "audio" | "location";
+
+export interface ChatMessage {
+  id: string;
+  conversation_id: string;
+  sender_id: string;
+  sender_name: string;
+  type: MessageType;
+  content: string;
+  photo_url: string | null;
+  audio_url: string | null;
+  location: { lat: number; lng: number; name: string } | null;
+  read: boolean;
+  created_at: string;
+}
+
+export interface Conversation {
+  id: string;
+  participants: string[];
+  last_message: string;
+  last_message_time: string;
+  unread_count: number;
+}
+
+export interface MarketplaceListing {
+  id: string;
+  seller_id: string;
+  seller_name: string;
+  title: string;
+  description: string;
+  price: number;
+  currency: string;
+  category: "seeds" | "nutrients" | "equipment" | "harvest" | "supplies" | "other";
+  images: string[];
+  condition: "new" | "used" | "like_new";
+  location: string;
+  status: "active" | "sold" | "reserved";
+  created_at: string;
+}

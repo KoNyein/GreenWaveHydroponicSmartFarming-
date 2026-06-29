@@ -15,6 +15,9 @@ import type {
   WallPost,
   MemberSubscription,
   Friendship,
+  ChatMessage,
+  Conversation,
+  MarketplaceListing,
 } from "@/types/database";
 
 const uuid = (n: number) => `00000000-0000-0000-0000-${String(n).padStart(12, "0")}`;
@@ -251,6 +254,39 @@ export const mockSubscriptions: MemberSubscription[] = [
   { id: uuid(302), user_id: uuid(5), plan: "free_trial", status: "expired", trial_start: "2025-05-01", trial_end: "2025-05-15", features: ["pos", "hydroponic"], created_at: "2025-05-01T00:00:00Z" },
   { id: uuid(303), user_id: uuid(6), plan: "pro", status: "active", trial_start: "2025-03-15", trial_end: "2025-03-29", features: ["pos", "hydroponic", "cctv", "inventory", "dry_room", "store_room"], created_at: "2025-03-15T00:00:00Z" },
   { id: uuid(304), user_id: uuid(7), plan: "basic", status: "active", trial_start: "2025-04-10", trial_end: "2025-04-24", features: ["pos", "hydroponic"], created_at: "2025-04-10T00:00:00Z" },
+];
+
+export const mockConversations: Conversation[] = [
+  { id: uuid(500), participants: [uuid(1), uuid(2)], last_message: "The new nutrient mix is ready for Zone A", last_message_time: "2025-06-22T09:30:00Z", unread_count: 2 },
+  { id: uuid(501), participants: [uuid(1), uuid(4)], last_message: "Thanks for the seedling tips!", last_message_time: "2025-06-21T15:45:00Z", unread_count: 0 },
+  { id: uuid(502), participants: [uuid(1), uuid(6)], last_message: "📍 Mandalay, Myanmar", last_message_time: "2025-06-20T11:00:00Z", unread_count: 1 },
+  { id: uuid(503), participants: [uuid(1), uuid(3)], last_message: "pH report is attached", last_message_time: "2025-06-19T16:30:00Z", unread_count: 0 },
+];
+
+export const mockMessages: ChatMessage[] = [
+  { id: uuid(600), conversation_id: uuid(500), sender_id: uuid(2), sender_name: "Mike Johnson", type: "text", content: "Hey, how are the Zone A plants doing?", photo_url: null, audio_url: null, location: null, read: true, created_at: "2025-06-22T09:00:00Z" },
+  { id: uuid(601), conversation_id: uuid(500), sender_id: uuid(1), sender_name: "Admin User", type: "text", content: "Looking great! EC levels are stable at 1.8", photo_url: null, audio_url: null, location: null, read: true, created_at: "2025-06-22T09:10:00Z" },
+  { id: uuid(602), conversation_id: uuid(500), sender_id: uuid(2), sender_name: "Mike Johnson", type: "photo", content: "Check out the new growth!", photo_url: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=400", audio_url: null, location: null, read: true, created_at: "2025-06-22T09:15:00Z" },
+  { id: uuid(603), conversation_id: uuid(500), sender_id: uuid(1), sender_name: "Admin User", type: "text", content: "Impressive! The trichomes are developing nicely", photo_url: null, audio_url: null, location: null, read: true, created_at: "2025-06-22T09:20:00Z" },
+  { id: uuid(604), conversation_id: uuid(500), sender_id: uuid(2), sender_name: "Mike Johnson", type: "text", content: "The new nutrient mix is ready for Zone A", photo_url: null, audio_url: null, location: null, read: false, created_at: "2025-06-22T09:30:00Z" },
+  { id: uuid(605), conversation_id: uuid(500), sender_id: uuid(2), sender_name: "Mike Johnson", type: "audio", content: "Voice message (0:15)", photo_url: null, audio_url: "/audio/voice-note.mp3", location: null, read: false, created_at: "2025-06-22T09:31:00Z" },
+  { id: uuid(610), conversation_id: uuid(501), sender_id: uuid(4), sender_name: "John Doe", type: "text", content: "Hi! I just started with hydroponics. Any tips for seedlings?", photo_url: null, audio_url: null, location: null, read: true, created_at: "2025-06-21T14:00:00Z" },
+  { id: uuid(611), conversation_id: uuid(501), sender_id: uuid(1), sender_name: "Admin User", type: "text", content: "Keep pH between 5.5-6.0, humidity around 70%, and temperature at 22-25°C", photo_url: null, audio_url: null, location: null, read: true, created_at: "2025-06-21T15:00:00Z" },
+  { id: uuid(612), conversation_id: uuid(501), sender_id: uuid(4), sender_name: "John Doe", type: "text", content: "Thanks for the seedling tips!", photo_url: null, audio_url: null, location: null, read: true, created_at: "2025-06-21T15:45:00Z" },
+  { id: uuid(620), conversation_id: uuid(502), sender_id: uuid(6), sender_name: "Aung Kyaw", type: "text", content: "ကျွန်တော် Mandalay မှာ farm အသစ်ဖွင့်ပါတယ်", photo_url: null, audio_url: null, location: null, read: true, created_at: "2025-06-20T10:00:00Z" },
+  { id: uuid(621), conversation_id: uuid(502), sender_id: uuid(6), sender_name: "Aung Kyaw", type: "location", content: "📍 Mandalay, Myanmar", photo_url: null, audio_url: null, location: { lat: 21.9162, lng: 95.9560, name: "Mandalay, Myanmar" }, read: false, created_at: "2025-06-20T11:00:00Z" },
+  { id: uuid(630), conversation_id: uuid(503), sender_id: uuid(3), sender_name: "Sarah Williams", type: "text", content: "pH report is attached", photo_url: null, audio_url: null, location: null, read: true, created_at: "2025-06-19T16:30:00Z" },
+  { id: uuid(631), conversation_id: uuid(503), sender_id: uuid(3), sender_name: "Sarah Williams", type: "photo", content: "pH Report", photo_url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400", audio_url: null, location: null, read: true, created_at: "2025-06-19T16:31:00Z" },
+];
+
+export const mockMarketplaceListings: MarketplaceListing[] = [
+  { id: uuid(700), seller_id: uuid(1), seller_name: "Admin User", title: "Premium Hydroponic Nutrient Kit", description: "Complete A+B nutrient solution for all growth stages. pH balanced, includes CalMag supplement.", price: 45, currency: "USD", category: "nutrients", images: ["https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400"], condition: "new", location: "Yangon, Myanmar", status: "active", created_at: "2025-06-18T10:00:00Z" },
+  { id: uuid(701), seller_id: uuid(2), seller_name: "Mike Johnson", title: "LED Grow Light 600W Full Spectrum", description: "Samsung LM301B diodes, dimmable, covers 4x4ft area. Used for one cycle only.", price: 120, currency: "USD", category: "equipment", images: ["https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400"], condition: "like_new", location: "Yangon, Myanmar", status: "active", created_at: "2025-06-17T14:00:00Z" },
+  { id: uuid(702), seller_id: uuid(6), seller_name: "Aung Kyaw", title: "Organic Cannabis Seeds - OG Kush", description: "Feminized seeds, 5 pack. Indoor/outdoor suitable. High THC genetics.", price: 35, currency: "USD", category: "seeds", images: ["https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=400"], condition: "new", location: "Mandalay, Myanmar", status: "active", created_at: "2025-06-16T09:00:00Z" },
+  { id: uuid(703), seller_id: uuid(4), seller_name: "John Doe", title: "pH/EC Digital Meter Combo", description: "Accurate pH and EC readings. Calibration solutions included. Perfect for hydro monitoring.", price: 55, currency: "USD", category: "equipment", images: ["https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=400"], condition: "new", location: "San Francisco, CA", status: "active", created_at: "2025-06-15T11:00:00Z" },
+  { id: uuid(704), seller_id: uuid(3), seller_name: "Sarah Williams", title: "Dried Premium Flower - 28g", description: "Properly cured, stored in glass jars. Lab tested. Smooth smoke.", price: 200, currency: "USD", category: "harvest", images: ["https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=400"], condition: "new", location: "Yangon, Myanmar", status: "active", created_at: "2025-06-14T16:00:00Z" },
+  { id: uuid(705), seller_id: uuid(7), seller_name: "Thandar Win", title: "Clay Pebbles 50L Bag", description: "Expanded clay aggregate for hydroponic growing media. Washed and pH neutral.", price: 18, currency: "USD", category: "supplies", images: ["https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400"], condition: "new", location: "Yangon, Myanmar", status: "active", created_at: "2025-06-13T08:00:00Z" },
+  { id: uuid(706), seller_id: uuid(2), seller_name: "Mike Johnson", title: "Air Pump + 4 Air Stones Kit", description: "Commercial grade air pump. Quiet operation. Ideal for DWC systems.", price: 30, currency: "USD", category: "equipment", images: ["https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400"], condition: "used", location: "Yangon, Myanmar", status: "sold", created_at: "2025-06-12T10:00:00Z" },
 ];
 
 export function generateSensorHistory(zoneId: string, hours: number = 24): SensorReading[] {

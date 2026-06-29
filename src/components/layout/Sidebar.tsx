@@ -22,6 +22,8 @@ import {
   ChevronRight,
   UserCircle,
   Crown,
+  MessageCircle,
+  ShoppingBag,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -44,6 +46,8 @@ export default function Sidebar() {
     { href: "/affiliate", label: tr("nav.affiliate"), icon: Link2 },
     { href: "/shop/dropship", label: tr("nav.dropship"), icon: Truck },
     { href: "/members", label: tr("nav.members"), icon: Users },
+    { href: "/messenger", label: tr("messenger.title"), icon: MessageCircle },
+    { href: "/marketplace", label: tr("marketplace.title"), icon: ShoppingBag },
     { href: "/profile", label: tr("profile.myProfile"), icon: UserCircle },
     { href: "/subscription", label: tr("trial.pricing"), icon: Crown },
   ];
