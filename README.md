@@ -17,6 +17,29 @@ A comprehensive hydroponic cannabis smart farming management system built with *
 - **Affiliate Program** - Affiliate link management, click/conversion tracking, commission reports
 - **Member Management** - User registration, role-based access control (admin/manager/staff/member)
 
+
+## Project Analysis & Brainstorm
+
+GreenWave is structured as an operations dashboard for hydroponic farm teams, combining production monitoring, retail workflows, and member engagement in one interface. The strongest product direction is to turn the current demo into a data-first command center: stable sensor timelines, actionable alerts, and operational KPIs that can later be backed by Supabase tables and real IoT feeds.
+
+### Current Strengths
+
+- Broad module coverage across farm monitoring, CCTV, POS, inventory, dry room, store room, sales, marketplace, affiliate, and member areas.
+- Shared UI primitives and centralized mock data make it easy to iterate on dashboards before connecting live services.
+- Bilingual settings and theme support provide a good foundation for teams that need localized operations screens.
+
+### Recommended Next Updates
+
+1. **Data reliability** - Keep demo sensor data deterministic so screenshots, hydration, tests, and chart comparisons are stable between renders.
+2. **Operational alerts** - Add threshold-based alerts for pH, EC, humidity, low water, offline cameras, and low stock.
+3. **Supabase integration path** - Replace each mock collection module-by-module, starting with sensor readings and inventory because they drive the most dashboard decisions.
+4. **Analytics layer** - Add derived metrics such as revenue by channel, yield by batch, shrinkage, and average time in drying/curing.
+5. **Role workflows** - Split admin, staff, and member tasks more clearly so each dashboard highlights only the actions relevant to that user.
+
+### Demo Data Notes
+
+Mock sensor readings now use a fixed demo clock and seeded variation instead of runtime randomness. This keeps the UI realistic while avoiding inconsistent values during React rendering, automated tests, and visual reviews.
+
 ## Tech Stack
 
 - **Framework**: Next.js 16 (App Router)
