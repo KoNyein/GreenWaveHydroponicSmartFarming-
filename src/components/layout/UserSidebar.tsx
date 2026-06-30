@@ -7,68 +7,38 @@ import { useSidebarStore, useSettingsStore, useAuthStore } from "@/lib/store";
 import { t } from "@/lib/translations";
 import {
   LayoutDashboard,
-  Leaf,
-  Camera,
+  ShoppingBag,
   ShoppingCart,
   Package,
-  Wind,
-  Warehouse,
-  BarChart3,
-  Store,
-  Users,
-  Link2,
-  Truck,
+  Heart,
+  Bell,
+  MessageCircle,
+  UserCircle,
+  Settings,
   ChevronLeft,
   ChevronRight,
-  UserCircle,
-  Crown,
-  MessageCircle,
-  ShoppingBag,
+  LogOut,
+  Leaf,
 } from "lucide-react";
 
-export default function Sidebar() {
+export default function UserSidebar() {
   const pathname = usePathname();
   const { isCollapsed, toggle } = useSidebarStore();
   const { locale } = useSettingsStore();
-  const { user } = useAuthStore();
+  const { user, logout } = useAuthStore();
 
   const tr = (key: string) => t(key, locale);
 
-  // Check if user is admin
-  const isAdmin = user?.role === 'admin';
-
-  // Common navigation items for all users
-  const commonNavItems = [
-    { href: "/dashboard", label: tr("nav.dashboard"), icon: LayoutDashboard },
-    { href: "/farm", label: tr("nav.farm"), icon: Leaf },
-    { href: "/cctv", label: tr("nav.cctv"), icon: Camera },
-    { href: "/pos", label: tr("nav.pos"), icon: ShoppingCart },
-    { href: "/inventory", label: tr("nav.inventory"), icon: Package },
-    { href: "/dry-room", label: tr("nav.dryroom"), icon: Wind },
-    { href: "/store-room", label: tr("nav.storeroom"), icon: Warehouse },
-    { href: "/sales", label: tr("nav.sales"), icon: BarChart3 },
-    { href: "/shop", label: tr("nav.shop"), icon: Store },
-    { href: "/affiliate", label: tr("nav.affiliate"), icon: Link2 },
-    { href: "/shop/dropship", label: tr("nav.dropship"), icon: Truck },
-    { href: "/messenger", label: tr("messenger.title"), icon: MessageCircle },
-    { href: "/marketplace", label: tr("marketplace.title"), icon: ShoppingBag },
-  ];
-
-  // Admin-specific navigation items
-  const adminNavItems = [
-    { href: "/admin/dashboard", label: tr("nav.adminDashboard"), icon: Crown },
-    { href: "/admin/users", label: tr("nav.userManagement"), icon: Users },
-    { href: "/admin/settings", label: tr("nav.systemSettings"), icon: Settings },
-  ];
-
-  // User-specific navigation items
-  const userNavItems = [
+  const navItems = [
     { href: "/user/dashboard", label: tr("nav.userDashboard"), icon: LayoutDashboard },
+    { href: "/marketplace", label: tr("nav.marketplace"), icon: ShoppingBag },
+    { href: "/user/orders", label: tr("nav.myOrders"), icon: ShoppingCart },
+    { href: "/user/wishlist", label: tr("nav.myWishlist"), icon: Heart },
+    { href: "/messenger", label: tr("nav.messages"), icon: MessageCircle },
+    { href: "/user/notifications", label: tr("nav.notifications"), icon: Bell },
     { href: "/user/profile", label: tr("nav.myProfile"), icon: UserCircle },
+    { href: "/user/settings", label: tr("nav.settings"), icon: Settings },
   ];
-
-  // Combine navigation items based on user role
-  const navItems = isAdmin ? [...adminNavItems, ...commonNavItems] : [...userNavItems, ...commonNavItems];
 
   return (
     <aside
@@ -77,6 +47,7 @@ export default function Sidebar() {
         isCollapsed ? "w-16" : "w-64"
       )}
     >
+      {/* Logo */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-white/10">
         <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center flex-shrink-0">
           <Leaf className="w-5 h-5 text-white" />
@@ -84,11 +55,12 @@ export default function Sidebar() {
         {!isCollapsed && (
           <div className="overflow-hidden">
             <h1 className="text-sm font-bold text-white leading-tight">{tr("app.name")}</h1>
-            <p className="text-[10px] text-slate-400">{tr("app.subtitle")}</p>
+            <p className="text-[10px] text-slate-400 truncate">{user?.email || tr("app.subtitle")}</p>
           </div>
         )}
       </div>
 
+      {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
@@ -112,6 +84,35 @@ export default function Sidebar() {
         })}
       </nav>
 
+      {/* User Section */}
+      <div className="border-t border-white/10 p-3">
+        {!isCollapsed && (
+          <div className="flex items-center gap-3 px-3 py-2 mb-2">
+            <div className="w-8 h-8 bg-accent/20 rounded-full flex items-center justify-center">
+              <UserCircle className="w-4 h-4 text-accent" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-white truncate">{user?.full_name || 'User'}</p>
+              <p className="text-xs text-slate-400">{user?.role || 'member'}</p>
+            </div>
+          </div>
+        )}
+        
+        {/* Logout Button */}
+        <button
+          onClick={logout}
+          className={cn(
+            "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all w-full",
+            "text-slate-400 hover:bg-red-500/10 hover:text-red-400"
+          )}
+          title={isCollapsed ? tr("auth.logout") : undefined}
+        >
+          <LogOut className="w-5 h-5 flex-shrink-0" />
+          {!isCollapsed && <span>{tr("auth.logout")}</span>}
+        </button>
+      </div>
+
+      {/* Collapse Toggle */}
       <button
         onClick={toggle}
         className="flex items-center justify-center py-3 border-t border-white/10 text-slate-400 hover:text-white transition"
@@ -121,6 +122,3 @@ export default function Sidebar() {
     </aside>
   );
 }
-
-// Import Settings for admin nav
-import { Settings } from "lucide-react";
