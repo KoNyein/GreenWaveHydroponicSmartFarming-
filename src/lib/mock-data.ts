@@ -22,6 +22,17 @@ import type {
 
 const uuid = (n: number) => `00000000-0000-0000-0000-${String(n).padStart(12, "0")}`;
 
+const DEMO_NOW = new Date("2026-06-30T09:00:00Z");
+
+function seededNoise(seed: number): number {
+  const value = Math.sin(seed * 12.9898) * 43758.5453;
+  return value - Math.floor(value);
+}
+
+function demoTimestamp(hoursAgo: number): string {
+  return new Date(DEMO_NOW.getTime() - hoursAgo * 3600000).toISOString();
+}
+
 export const mockProfile: Profile = {
   id: uuid(1),
   email: "admin@greenwave.farm",
@@ -46,14 +57,14 @@ export const mockZones: FarmZone[] = [
 export const mockSensorReadings: SensorReading[] = mockZones.map((zone, i) => ({
   id: uuid(100 + i),
   zone_id: zone.id,
-  temperature: 22 + Math.random() * 6,
-  humidity: 45 + Math.random() * 25,
-  ph_level: 5.5 + Math.random() * 1.5,
-  ec_level: 1.0 + Math.random() * 1.5,
-  water_level: 60 + Math.random() * 35,
-  light_intensity: 400 + Math.random() * 600,
-  nutrient_ppm: 800 + Math.random() * 600,
-  created_at: new Date().toISOString(),
+  temperature: 22 + seededNoise(100 + i) * 6,
+  humidity: 45 + seededNoise(200 + i) * 25,
+  ph_level: 5.5 + seededNoise(300 + i) * 1.5,
+  ec_level: 1.0 + seededNoise(400 + i) * 1.5,
+  water_level: 60 + seededNoise(500 + i) * 35,
+  light_intensity: 400 + seededNoise(600 + i) * 600,
+  nutrient_ppm: 800 + seededNoise(700 + i) * 600,
+  created_at: demoTimestamp(i),
 }));
 
 export const mockCameras: Camera[] = [
@@ -291,19 +302,22 @@ export const mockMarketplaceListings: MarketplaceListing[] = [
 
 export function generateSensorHistory(zoneId: string, hours: number = 24): SensorReading[] {
   const readings: SensorReading[] = [];
-  const now = Date.now();
+  const zoneSeed = Number(zoneId.slice(-3)) || 1;
+
   for (let i = 0; i < hours; i++) {
+    const seed = zoneSeed * 1000 + i;
+
     readings.push({
       id: `hist-${zoneId}-${i}`,
       zone_id: zoneId,
-      temperature: 22 + Math.sin(i / 4) * 3 + Math.random() * 1,
-      humidity: 55 + Math.cos(i / 6) * 10 + Math.random() * 3,
-      ph_level: 6.0 + Math.sin(i / 8) * 0.5 + Math.random() * 0.2,
-      ec_level: 1.5 + Math.sin(i / 5) * 0.3 + Math.random() * 0.1,
-      water_level: 75 + Math.cos(i / 3) * 15 + Math.random() * 2,
-      light_intensity: i % 24 < 18 ? 600 + Math.random() * 200 : 0,
-      nutrient_ppm: 1000 + Math.sin(i / 4) * 200 + Math.random() * 50,
-      created_at: new Date(now - (hours - i) * 3600000).toISOString(),
+      temperature: 22 + Math.sin(i / 4) * 3 + seededNoise(seed + 1),
+      humidity: 55 + Math.cos(i / 6) * 10 + seededNoise(seed + 2) * 3,
+      ph_level: 6.0 + Math.sin(i / 8) * 0.5 + seededNoise(seed + 3) * 0.2,
+      ec_level: 1.5 + Math.sin(i / 5) * 0.3 + seededNoise(seed + 4) * 0.1,
+      water_level: 75 + Math.cos(i / 3) * 15 + seededNoise(seed + 5) * 2,
+      light_intensity: i % 24 < 18 ? 600 + seededNoise(seed + 6) * 200 : 0,
+      nutrient_ppm: 1000 + Math.sin(i / 4) * 200 + seededNoise(seed + 7) * 50,
+      created_at: demoTimestamp(hours - i),
     });
   }
   return readings;
