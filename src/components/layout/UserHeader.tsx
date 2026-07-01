@@ -230,9 +230,9 @@ export default function UserHeader() {
               EN
             </Button>
             <Button
-              variant={locale === 'mm' ? 'default' : 'ghost'}
+              variant={locale === 'my' ? 'default' : 'ghost'}
               size="sm"
-              onClick={() => setLocale('mm')}
+              onClick={() => setLocale('my')}
               className="h-8 px-2"
             >
               MM
@@ -245,4 +245,4 @@ export default function UserHeader() {
 }
 
 // Import LogOut for the logout button
-import { LogOut } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";

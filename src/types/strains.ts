@@ -23,6 +23,7 @@ export type FlavorType =
   | 'fruity'
   | 'citrus'
   | 'berry'
+  | 'grape'
   | 'diesel'
   | 'pine'
   | 'woody'
@@ -31,7 +32,11 @@ export type FlavorType =
   | 'cheese'
   | 'minty'
   | 'vanilla'
-  | 'nutty';
+  | 'nutty'
+  | 'sour'
+  | 'tropical'
+  | 'pineapple'
+  | 'creamy';
 
 export type MedicalUseType = 
   | 'stress'
@@ -135,8 +140,26 @@ export interface StrainSearchResult {
   total_pages: number;
 }
 
+export type CommonStrain = Omit<
+  Strain,
+  | 'id'
+  | 'slug'
+  | 'description'
+  | 'thca'
+  | 'cbn'
+  | 'cbg'
+  | 'terpenes'
+  | 'images'
+  | 'awards'
+  | 'is_featured'
+  | 'is_active'
+  | 'created_at'
+  | 'updated_at'
+  | 'review_count'
+>;
+
 // Common cannabis strains data for reference
-export const COMMON_STRAINS = [
+export const COMMON_STRAINS: CommonStrain[] = [
   {
     name: 'OG Kush',
     type: 'hybrid' as StrainType,
@@ -339,6 +362,41 @@ export const COMMON_STRAINS = [
   },
 ];
 
+const DEMO_STRAIN_DATE = "2026-07-01T00:00:00.000Z";
+
+export const MOCK_STRAINS: Strain[] = COMMON_STRAINS.map((strain, index) => {
+  const id = `strain-${index + 1}`;
+  const slug = strain.name.toLowerCase().replace(/\s+/g, '-');
+
+  return {
+    ...strain,
+    id,
+    slug,
+    description: `A popular cannabis strain known for its ${strain.effects.join(', ')} effects and ${strain.flavors.join(', ')} flavors.`,
+    thca: null,
+    cbn: null,
+    cbg: null,
+    terpenes: [],
+    images: [
+      {
+        id: `${id}-image-1`,
+        strain_id: id,
+        image_url: `/images/strains/${slug}.jpg`,
+        alt_text: strain.name,
+        is_primary: true,
+        sort_order: 1,
+        created_at: DEMO_STRAIN_DATE,
+      },
+    ],
+    awards: [],
+    is_featured: index < 3,
+    is_active: true,
+    created_at: DEMO_STRAIN_DATE,
+    updated_at: DEMO_STRAIN_DATE,
+    review_count: 50 + index * 7,
+  };
+});
+
 // Terpene data
 export const TERPENES = [
   { name: 'Myrcene', description: 'Earthy, musky, with hints of cloves and herbs', effects: ['relaxing', 'sedating', 'anti-inflammatory'] },
@@ -354,7 +412,7 @@ export const TERPENES = [
 ];
 
 // Effect categories for filtering
-export const EFFECT_CATEGORIES = [
+export const EFFECT_CATEGORIES: { value: EffectType; label: string; icon: string }[] = [
   { value: 'relaxed', label: 'Relaxed', icon: '😌' },
   { value: 'happy', label: 'Happy', icon: '😊' },
   { value: 'euphoric', label: 'Euphoric', icon: '🌈' },
@@ -371,12 +429,13 @@ export const EFFECT_CATEGORIES = [
 ];
 
 // Flavor categories for filtering
-export const FLAVOR_CATEGORIES = [
+export const FLAVOR_CATEGORIES: { value: FlavorType; label: string; icon: string }[] = [
   { value: 'earthy', label: 'Earthy', icon: '🌱' },
   { value: 'sweet', label: 'Sweet', icon: '🍬' },
   { value: 'fruity', label: 'Fruity', icon: '🍓' },
   { value: 'citrus', label: 'Citrus', icon: '🍊' },
   { value: 'berry', label: 'Berry', icon: '🫐' },
+  { value: 'grape', label: 'Grape', icon: '🍇' },
   { value: 'diesel', label: 'Diesel', icon: '⛽' },
   { value: 'pine', label: 'Pine', icon: '🌲' },
   { value: 'woody', label: 'Woody', icon: '🪵' },
@@ -386,10 +445,14 @@ export const FLAVOR_CATEGORIES = [
   { value: 'minty', label: 'Minty', icon: '🌿' },
   { value: 'vanilla', label: 'Vanilla', icon: '🍦' },
   { value: 'nutty', label: 'Nutty', icon: '🌰' },
+  { value: 'sour', label: 'Sour', icon: '🍋' },
+  { value: 'tropical', label: 'Tropical', icon: '🌴' },
+  { value: 'pineapple', label: 'Pineapple', icon: '🍍' },
+  { value: 'creamy', label: 'Creamy', icon: '🍦' },
 ];
 
 // Medical use categories for filtering
-export const MEDICAL_CATEGORIES = [
+export const MEDICAL_CATEGORIES: { value: MedicalUseType; label: string; icon: string }[] = [
   { value: 'stress', label: 'Stress', icon: '🧘' },
   { value: 'anxiety', label: 'Anxiety', icon: '😰' },
   { value: 'depression', label: 'Depression', icon: '😞' },
@@ -406,21 +469,21 @@ export const MEDICAL_CATEGORIES = [
 ];
 
 // Strain type options
-export const STRAIN_TYPES = [
+export const STRAIN_TYPES: { value: StrainType; label: string; icon: string; description: string }[] = [
   { value: 'indica', label: 'Indica', icon: '🌙', description: 'Relaxing, body high, nighttime use' },
   { value: 'sativa', label: 'Sativa', icon: '☀️', description: 'Energizing, cerebral high, daytime use' },
   { value: 'hybrid', label: 'Hybrid', icon: '🌅', description: 'Balanced effects, best of both worlds' },
 ];
 
 // Growing difficulty options
-export const GROWING_DIFFICULTY = [
+export const GROWING_DIFFICULTY: { value: Strain['growing_difficulty']; label: string; icon: string; description: string }[] = [
   { value: 'easy', label: 'Easy', icon: '🟢', description: 'Great for beginners' },
   { value: 'moderate', label: 'Moderate', icon: '🟡', description: 'Some experience recommended' },
   { value: 'difficult', label: 'Difficult', icon: '🔴', description: 'Expert growers only' },
 ];
 
 // Climate options
-export const CLIMATE_OPTIONS = [
+export const CLIMATE_OPTIONS: { value: Strain['climate']; label: string; icon: string }[] = [
   { value: 'indoor', label: 'Indoor', icon: '🏠' },
   { value: 'outdoor', label: 'Outdoor', icon: '🌳' },
   { value: 'greenhouse', label: 'Greenhouse', icon: '🏡' },

@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { t } from "@/lib/translations";
-import { Leaf, Star, Fire, Heart } from "lucide-react";
+import { Leaf, Star, Flame, Heart } from "lucide-react";
 import { Strain, EFFECT_CATEGORIES, FLAVOR_CATEGORIES } from "@/types/strains";
 
 interface StrainCardProps {
@@ -86,7 +86,7 @@ export default function StrainCard({ strain, showActions = true }: StrainCardPro
         <div className="absolute bottom-2 left-2 flex gap-1">
           {strain.thc !== null && (
             <Badge className="bg-red-500 text-white">
-              <Fire className="w-3 h-3 mr-1" />
+              <Flame className="w-3 h-3 mr-1" />
               {strain.thc}% THC
             </Badge>
           )}

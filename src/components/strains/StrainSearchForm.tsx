@@ -39,7 +39,7 @@ export default function StrainSearchForm({
   totalCount,
 }: StrainSearchFormProps) {
   const { locale } = useSettingsStore();
-  const tr = (key: string) => t(key, locale);
+  const tr = (key: string, params?: Record<string, string | number>) => t(key, locale, params);
   const [showFilters, setShowFilters] = useState(false);
 
   // Check if any filters are active

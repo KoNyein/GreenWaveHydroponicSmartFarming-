@@ -216,11 +216,3 @@ export default function AdminNotificationsPage() {
 // Import cn for class merging
 import { cn } from "@/lib/utils";
 
-// Import priority types for Badge
-import { BadgeProps } from "@/components/ui/Badge";
-
-declare module "@/components/ui/Badge" {
-  interface BadgeProps {
-    variant?: "default" | "secondary" | "destructive" | "outline" | "high" | "medium" | "low";
-  }
-}

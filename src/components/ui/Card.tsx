@@ -6,16 +6,24 @@ interface CardProps {
   title?: string;
   subtitle?: string;
   action?: React.ReactNode;
+  icon?: React.ComponentType<{ className?: string }>;
 }
 
-export function Card({ children, className, title, subtitle, action }: CardProps) {
+export function Card({ children, className, title, subtitle, action, icon: Icon }: CardProps) {
   return (
     <div className={cn("bg-card-bg border border-card-border rounded-xl shadow-sm", className)}>
       {(title || action) && (
         <div className="flex items-center justify-between px-6 py-4 border-b border-card-border">
-          <div>
-            {title && <h3 className="text-base font-semibold">{title}</h3>}
-            {subtitle && <p className="text-sm text-gray-500 mt-0.5">{subtitle}</p>}
+          <div className="flex items-center gap-3">
+            {Icon && (
+              <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center">
+                <Icon className="w-4 h-4" />
+              </div>
+            )}
+            <div>
+              {title && <h3 className="text-base font-semibold">{title}</h3>}
+              {subtitle && <p className="text-sm text-gray-500 mt-0.5">{subtitle}</p>}
+            </div>
           </div>
           {action}
         </div>

@@ -19,7 +19,7 @@ import {
   SortDesc,
   Leaf,
   Star,
-  Fire,
+  Flame,
   Heart,
   TrendingUp,
   Clock,
@@ -36,33 +36,41 @@ import {
   GROWING_DIFFICULTY,
   CLIMATE_OPTIONS,
   SORT_OPTIONS,
-  COMMON_STRAINS,
+  MOCK_STRAINS,
 } from "@/types/strains";
 
 // Mock data for demo - in production, this would come from your database
-const mockStrains: Strain[] = COMMON_STRAINS.map((strain, index) => ({
-  ...strain,
-  id: `strain-${index + 1}`,
-  slug: strain.name.toLowerCase().replace(/\s+/g, '-'),
-  description: `A popular cannabis strain known for its ${strain.effects.join(', ')} effects and ${strain.flavors.join(', ')} flavors.`,
-  thca: null,
-  cbn: null,
-  cbg: null,
-  terpenes: [],
-  images: [
-    { id: '1', strain_id: `strain-${index + 1}`, image_url: `/images/strains/${strain.slug}.jpg`, alt_text: strain.name, is_primary: true, sort_order: 1, created_at: new Date().toISOString() },
-  ],
-  awards: [],
-  is_featured: index < 3, // First 3 are featured
-  is_active: true,
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString(),
-  review_count: Math.floor(Math.random() * 100) + 50,
-}));
+const mockStrains: Strain[] = MOCK_STRAINS;
+
+function getStrainTypeColor(type: string) {
+  switch (type) {
+    case 'indica':
+      return 'bg-purple-500';
+    case 'sativa':
+      return 'bg-green-500';
+    case 'hybrid':
+      return 'bg-orange-500';
+    default:
+      return 'bg-gray-500';
+  }
+}
+
+function getStrainTypeIcon(type: string) {
+  switch (type) {
+    case 'indica':
+      return '🌙';
+    case 'sativa':
+      return '☀️';
+    case 'hybrid':
+      return '🌅';
+    default:
+      return '🌱';
+  }
+}
 
 export default function StrainsListPage() {
   const { locale } = useSettingsStore();
-  const tr = (key: string) => t(key, locale);
+  const tr = (key: string, params?: Record<string, string | number>) => t(key, locale, params);
 
   // State for filters
   const [filters, setFilters] = useState<StrainFilter>({
@@ -384,7 +392,7 @@ export default function StrainsListPage() {
               {/* THC Range Filter */}
               <div>
                 <h4 className="font-medium mb-3 flex items-center gap-2">
-                  <Fire className="w-4 h-4 text-orange-500" />
+                  <Flame className="w-4 h-4 text-orange-500" />
                   {tr("strains.thcContent")}
                 </h4>
                 <div className="space-y-2">
@@ -648,7 +656,7 @@ export default function StrainsListPage() {
 // Strain Card Component
 function StrainCard({ strain }: { strain: Strain }) {
   const { locale } = useSettingsStore();
-  const tr = (key: string) => t(key, locale);
+  const tr = (key: string, params?: Record<string, string | number>) => t(key, locale, params);
 
   return (
     <Card className="group hover:shadow-lg transition-all overflow-hidden">
@@ -690,7 +698,7 @@ function StrainCard({ strain }: { strain: Strain }) {
         <div className="absolute bottom-2 left-2 flex gap-1">
           {strain.thc !== null && (
             <Badge className="bg-red-500 text-white">
-              <Fire className="w-3 h-3 mr-1" />
+              <Flame className="w-3 h-3 mr-1" />
               {strain.thc}% THC
             </Badge>
           )}

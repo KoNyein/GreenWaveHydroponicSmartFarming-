@@ -6,7 +6,7 @@ import { StatCard, Card } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Button } from "@/components/ui/Button";
 import { Progress } from "@/components/ui/Progress";
-import { formatCurrency, formatDateTime, formatNumber } from "@/lib/utils";
+import { cn, formatCurrency, formatDateTime, formatNumber } from "@/lib/utils";
 import { t } from "@/lib/translations";
 import {
   LayoutDashboard,
@@ -24,6 +24,8 @@ import {
   Clock,
   Plus,
 } from "lucide-react";
+
+const DEMO_NOW = new Date("2026-07-01T05:00:00.000Z").getTime();
 
 export default function AdminDashboardPage() {
   const { user } = useAuthStore();
@@ -45,9 +47,9 @@ export default function AdminDashboardPage() {
   };
 
   const recentUsers = [
-    { id: '1', name: 'John Doe', email: 'john@example.com', role: 'member', status: 'active', joined: new Date().toISOString() },
-    { id: '2', name: 'Jane Smith', email: 'jane@example.com', role: 'staff', status: 'active', joined: new Date(Date.now() - 86400000).toISOString() },
-    { id: '3', name: 'Bob Johnson', email: 'bob@example.com', role: 'member', status: 'pending', joined: new Date(Date.now() - 172800000).toISOString() },
+    { id: '1', name: 'John Doe', email: 'john@example.com', role: 'member', status: 'active', joined: new Date(DEMO_NOW).toISOString() },
+    { id: '2', name: 'Jane Smith', email: 'jane@example.com', role: 'staff', status: 'active', joined: new Date(DEMO_NOW - 86400000).toISOString() },
+    { id: '3', name: 'Bob Johnson', email: 'bob@example.com', role: 'member', status: 'pending', joined: new Date(DEMO_NOW - 172800000).toISOString() },
   ];
 
   const systemAlerts = [

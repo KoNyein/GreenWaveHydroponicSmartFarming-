@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/store";
 import { Button } from "@/components/ui/Button";
@@ -11,14 +11,9 @@ import { Leaf, ArrowRight, ShieldCheck, Users, BarChart3, ShoppingBag, MessageCi
 export default function HomePage() {
   const { isAuthenticated, isLoading, user } = useAuthStore();
   const router = useRouter();
-  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (isMounted && !isLoading) {
+    if (!isLoading) {
       if (isAuthenticated) {
         // Redirect based on user role
         if (user?.role === 'admin') {
@@ -28,9 +23,9 @@ export default function HomePage() {
         }
       }
     }
-  }, [isMounted, isLoading, isAuthenticated, user, router]);
+  }, [isLoading, isAuthenticated, user, router]);
 
-  if (isLoading || (isMounted && isAuthenticated)) {
+  if (isLoading || isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
@@ -218,7 +213,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted">
-            <p>© {new Date().getFullYear()} GreenWave Hydroponic. All rights reserved.</p>
+            <p>Copyright 2026 GreenWave Hydroponic. All rights reserved.</p>
           </div>
         </div>
       </footer>

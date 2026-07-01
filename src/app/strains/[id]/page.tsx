@@ -11,7 +11,7 @@ import { t } from "@/lib/translations";
 import {
   Leaf,
   Star,
-  Fire,
+  Flame,
   Heart,
   Clock,
   Ruler,
@@ -34,8 +34,21 @@ import {
   MEDICAL_CATEGORIES,
   GROWING_DIFFICULTY,
   CLIMATE_OPTIONS,
-  COMMON_STRAINS,
+  MOCK_STRAINS,
 } from "@/types/strains";
+
+function getStrainTypeIcon(type: string) {
+  switch (type) {
+    case 'indica':
+      return '🌙';
+    case 'sativa':
+      return '☀️';
+    case 'hybrid':
+      return '🌅';
+    default:
+      return '🌱';
+  }
+}
 
 export default function StrainDetailPage() {
   const params = useParams();
@@ -44,9 +57,9 @@ export default function StrainDetailPage() {
 
   // Find the strain by ID or slug
   const strainId = params.id as string;
-  const strain: Strain | undefined = COMMON_STRAINS.find(s => 
-    s.id === strainId || 
-    s.slug === strainId || 
+  const strain: Strain | undefined = MOCK_STRAINS.find(s =>
+    s.id === strainId ||
+    s.slug === strainId ||
     s.name.toLowerCase().replace(/\s+/g, '-') === strainId
   );
 
@@ -179,7 +192,7 @@ export default function StrainDetailPage() {
             {/* Quick Stats */}
             <div className="grid grid-cols-2 gap-4 mt-6">
               <div className="text-center p-3 bg-hover-bg rounded-lg">
-                <Fire className="w-6 h-6 text-red-500 mx-auto mb-1" />
+                <Flame className="w-6 h-6 text-red-500 mx-auto mb-1" />
                 <p className="font-semibold">{strain.thc}%</p>
                 <p className="text-xs text-muted">{tr("strains.thc")}</p>
               </div>
@@ -227,7 +240,7 @@ export default function StrainDetailPage() {
           <div>
             <div className="flex items-center justify-between mb-1">
               <span className="font-medium flex items-center gap-2">
-                <Fire className="w-4 h-4 text-red-500" />
+                <Flame className="w-4 h-4 text-red-500" />
                 {tr("strains.thc")}
               </span>
               <span className="font-semibold">{strain.thc}%</span>
@@ -466,7 +479,7 @@ export default function StrainDetailPage() {
       {/* Similar Strains */}
       <Card title={tr("strains.similarStrains")}>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {COMMON_STRAINS
+          {MOCK_STRAINS
             .filter(s => s.id !== strain.id)
             .slice(0, 4)
             .map((similarStrain) => (

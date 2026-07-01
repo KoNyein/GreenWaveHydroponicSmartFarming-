@@ -40,7 +40,7 @@ import {
 export default function NewStrainPage() {
   const router = useRouter();
   const { locale } = useSettingsStore();
-  const tr = (key: string) => t(key, locale);
+  const tr = (key: string, params?: Record<string, string | number>) => t(key, locale, params);
 
   // Form state
   const [formData, setFormData] = useState<Partial<Strain>>({
