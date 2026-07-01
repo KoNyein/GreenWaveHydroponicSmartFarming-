@@ -24,6 +24,8 @@ import {
   Crown,
   MessageCircle,
   ShoppingBag,
+  Settings,
+  Dna,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -50,6 +52,7 @@ export default function Sidebar() {
     { href: "/shop", label: tr("nav.shop"), icon: Store },
     { href: "/affiliate", label: tr("nav.affiliate"), icon: Link2 },
     { href: "/shop/dropship", label: tr("nav.dropship"), icon: Truck },
+    { href: "/strains/lists", label: tr("nav.strains"), icon: Dna },
     { href: "/messenger", label: tr("messenger.title"), icon: MessageCircle },
     { href: "/marketplace", label: tr("marketplace.title"), icon: ShoppingBag },
   ];
@@ -121,6 +124,3 @@ export default function Sidebar() {
     </aside>
   );
 }
-
-// Import Settings for admin nav
-import { Settings } from "lucide-react";
