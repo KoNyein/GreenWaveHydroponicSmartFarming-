@@ -19,6 +19,8 @@ import {
   Clock,
 } from "lucide-react";
 
+const DEMO_NOW = new Date("2026-07-01T05:00:00.000Z").getTime();
+
 export default function UserDashboardPage() {
   const { user } = useAuthStore();
   const { locale } = useSettingsStore();
@@ -26,9 +28,9 @@ export default function UserDashboardPage() {
 
   // Mock data for demo
   const recentActivity = [
-    { id: '1', type: 'order', title: 'Order #12345', status: 'delivered', date: new Date().toISOString(), amount: 150.00 },
-    { id: '2', type: 'message', title: 'New message from Farm Team', status: 'unread', date: new Date(Date.now() - 3600000).toISOString() },
-    { id: '3', type: 'purchase', title: 'Nutrients purchased', status: 'completed', date: new Date(Date.now() - 86400000).toISOString(), amount: 75.50 },
+    { id: '1', type: 'order', title: 'Order #12345', status: 'delivered', date: new Date(DEMO_NOW).toISOString(), amount: 150.00 },
+    { id: '2', type: 'message', title: 'New message from Farm Team', status: 'unread', date: new Date(DEMO_NOW - 3600000).toISOString() },
+    { id: '3', type: 'purchase', title: 'Nutrients purchased', status: 'completed', date: new Date(DEMO_NOW - 86400000).toISOString(), amount: 75.50 },
   ];
 
   const quickActions = [

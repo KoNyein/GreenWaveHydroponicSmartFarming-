@@ -8,16 +8,18 @@ import { formatCurrency, formatDateTime } from "@/lib/utils";
 import { t } from "@/lib/translations";
 import { ShoppingBag, Package, Clock, CheckCircle, XCircle } from "lucide-react";
 
+const DEMO_NOW = new Date("2026-07-01T05:00:00.000Z").getTime();
+
 export default function UserOrdersPage() {
   const { locale } = useSettingsStore();
   const tr = (key: string) => t(key, locale);
 
   // Mock order data
   const orders = [
-    { id: '1', orderNumber: '#12345', date: new Date().toISOString(), status: 'delivered', amount: 150.00, items: 3 },
-    { id: '2', orderNumber: '#12344', date: new Date(Date.now() - 86400000).toISOString(), status: 'shipped', amount: 89.50, items: 2 },
-    { id: '3', orderNumber: '#12343', date: new Date(Date.now() - 172800000).toISOString(), status: 'processing', amount: 45.25, items: 1 },
-    { id: '4', orderNumber: '#12342', date: new Date(Date.now() - 259200000).toISOString(), status: 'cancelled', amount: 25.00, items: 1 },
+    { id: '1', orderNumber: '#12345', date: new Date(DEMO_NOW).toISOString(), status: 'delivered', amount: 150.00, items: 3 },
+    { id: '2', orderNumber: '#12344', date: new Date(DEMO_NOW - 86400000).toISOString(), status: 'shipped', amount: 89.50, items: 2 },
+    { id: '3', orderNumber: '#12343', date: new Date(DEMO_NOW - 172800000).toISOString(), status: 'processing', amount: 45.25, items: 1 },
+    { id: '4', orderNumber: '#12342', date: new Date(DEMO_NOW - 259200000).toISOString(), status: 'cancelled', amount: 25.00, items: 1 },
   ];
 
   const getStatusIcon = (status: string) => {

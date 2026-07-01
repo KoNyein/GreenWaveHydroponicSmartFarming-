@@ -232,9 +232,9 @@ export default function AdminHeader() {
               EN
             </Button>
             <Button
-              variant={locale === 'mm' ? 'default' : 'ghost'}
+              variant={locale === 'my' ? 'default' : 'ghost'}
               size="sm"
-              onClick={() => setLocale('mm')}
+              onClick={() => setLocale('my')}
               className="h-8 px-2"
             >
               MM

@@ -10,6 +10,7 @@ interface AuthState {
   register: (email: string, password: string, fullName: string) => Promise<boolean>;
   logout: () => void;
   setUser: (user: Profile | null) => void;
+  updateProfile: (profile: Partial<Profile>) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -39,6 +40,14 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   setUser: (user) => {
     set({ user, isAuthenticated: !!user, isLoading: false });
+  },
+
+  updateProfile: (profile) => {
+    set((state) => ({
+      user: state.user ? { ...state.user, ...profile } : state.user,
+      isAuthenticated: !!state.user,
+      isLoading: false,
+    }));
   },
 }));
 

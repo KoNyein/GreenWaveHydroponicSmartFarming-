@@ -29,6 +29,8 @@ const roleColors: Record<string, string> = {
   member: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300",
 };
 
+const DEMO_NOW = new Date("2026-07-01T05:00:00.000Z").getTime();
+
 export default function ProfilePage() {
   const { user } = useAuthStore();
   const { locale } = useSettingsStore();
@@ -43,7 +45,7 @@ export default function ProfilePage() {
   const subscription = mockSubscriptions.find((s) => s.user_id === profile.id);
 
   const trialDaysRemaining = subscription
-    ? Math.max(0, Math.ceil((new Date(subscription.trial_end).getTime() - Date.now()) / 86400000))
+    ? Math.max(0, Math.ceil((new Date(subscription.trial_end).getTime() - DEMO_NOW) / 86400000))
     : 0;
 
   return (

@@ -81,6 +81,8 @@ const featureLabels: Record<string, string> = {
   affiliate: "nav.affiliate",
 };
 
+const DEMO_NOW = new Date("2026-07-01T05:00:00.000Z").getTime();
+
 export default function SubscriptionPage() {
   const { user } = useAuthStore();
   const { locale } = useSettingsStore();
@@ -90,7 +92,7 @@ export default function SubscriptionPage() {
   const currentSub = mockSubscriptions.find((s) => s.user_id === userId);
 
   const trialDaysRemaining = currentSub
-    ? Math.max(0, Math.ceil((new Date(currentSub.trial_end).getTime() - Date.now()) / 86400000))
+    ? Math.max(0, Math.ceil((new Date(currentSub.trial_end).getTime() - DEMO_NOW) / 86400000))
     : 0;
 
   return (

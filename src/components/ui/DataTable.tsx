@@ -3,9 +3,12 @@
 import { cn } from "@/lib/utils";
 
 interface Column<T> {
-  key: string;
-  label: string;
+  key?: string;
+  label?: string;
+  accessor?: keyof T | string;
+  header?: string;
   render?: (item: T) => React.ReactNode;
+  cell?: (item: T) => React.ReactNode;
   className?: string;
 }
 
@@ -33,10 +36,10 @@ export function DataTable<T>({ columns, data, keyExtractor, emptyMessage = "No d
           <tr className="border-b border-card-border">
             {columns.map((col) => (
               <th
-                key={col.key}
+                key={col.key ?? String(col.accessor ?? col.header)}
                 className={cn("text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-4 py-3", col.className)}
               >
-                {col.label}
+                {col.label ?? col.header}
               </th>
             ))}
           </tr>
@@ -49,10 +52,12 @@ export function DataTable<T>({ columns, data, keyExtractor, emptyMessage = "No d
               onClick={() => onRowClick?.(item)}
             >
               {columns.map((col) => (
-                <td key={col.key} className={cn("px-4 py-3 text-sm", col.className)}>
-                  {col.render
+                <td key={col.key ?? String(col.accessor ?? col.header)} className={cn("px-4 py-3 text-sm", col.className)}>
+                  {col.cell
+                    ? col.cell(item)
+                    : col.render
                     ? col.render(item)
-                    : String((item as Record<string, unknown>)[col.key] ?? "")}
+                    : String((item as Record<string, unknown>)[String(col.key ?? col.accessor)] ?? "")}
                 </td>
               ))}
             </tr>
