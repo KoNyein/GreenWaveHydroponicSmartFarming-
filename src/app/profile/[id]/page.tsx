@@ -201,7 +201,7 @@ export default function MemberProfilePage() {
             )}
 
             {/* Post composer */}
-            <PostComposer authorInitial={currentUser.full_name.charAt(0)} tr={tr} />
+            <PostComposer />
 
             {/* Posts */}
             {wallPosts.length === 0 ? (
