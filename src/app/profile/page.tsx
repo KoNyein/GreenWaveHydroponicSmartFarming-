@@ -202,7 +202,7 @@ export default function ProfilePage() {
 
             {activeTab === "wall" && (
               <>
-                <PostComposer authorInitial={profile.full_name.charAt(0)} tr={tr} />
+                <PostComposer />
 
                 {wallPosts.length === 0 ? (
                   <Card>

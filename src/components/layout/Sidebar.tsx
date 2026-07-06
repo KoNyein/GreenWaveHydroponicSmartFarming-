@@ -26,6 +26,12 @@ import {
   ShoppingBag,
   Settings,
   Dna,
+  Newspaper,
+  Bell,
+  Heart,
+  Search,
+  Bookmark,
+  TrendingUp,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -38,6 +44,16 @@ export default function Sidebar() {
 
   // Check if user is admin
   const isAdmin = user?.role === 'admin';
+
+  // Social navigation items
+  const socialNavItems = [
+    { href: "/feed", label: "Feed", icon: Newspaper },
+    { href: "/friends", label: "Friends", icon: Heart },
+    { href: "/notifications", label: "Notifications", icon: Bell },
+    { href: "/search", label: "Search", icon: Search },
+    { href: "/trending", label: "Trending", icon: TrendingUp },
+    { href: "/bookmarks", label: "Saved", icon: Bookmark },
+  ];
 
   // Common navigation items for all users
   const commonNavItems = [
@@ -71,7 +87,9 @@ export default function Sidebar() {
   ];
 
   // Combine navigation items based on user role
-  const navItems = isAdmin ? [...adminNavItems, ...commonNavItems] : [...userNavItems, ...commonNavItems];
+  const navItems = isAdmin
+    ? [...adminNavItems, ...socialNavItems, ...commonNavItems]
+    : [...userNavItems, ...socialNavItems, ...commonNavItems];
 
   return (
     <aside
