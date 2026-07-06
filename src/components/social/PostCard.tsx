@@ -15,10 +15,13 @@ import {
   MapPin,
   ChevronDown,
   ChevronUp,
+  Bookmark,
+  BookmarkCheck,
 } from "lucide-react";
 import type { Post, Comment, ReactionType } from "@/types/social";
 import { getUserById, getPostComments } from "@/lib/social-mock-data";
 import { useSocialStore } from "@/lib/social-store";
+import { useMessagingStore } from "@/lib/messaging-store";
 
 const REACTIONS: { type: ReactionType; emoji: string; label: string }[] = [
   { type: "like", emoji: "👍", label: "Like" },
@@ -73,7 +76,9 @@ export default function PostCard({ post, currentUserId = "user-001", onProfileCl
   const [expandedReplies, setExpandedReplies] = useState<Set<string>>(new Set());
 
   const { toggleReaction, addComment, deletePost, sharePost } = useSocialStore();
+  const { toggleBookmark, isBookmarked } = useMessagingStore();
   const author = post.author || getUserById(post.author_id);
+  const bookmarked = isBookmarked(currentUserId, post.id);
 
   const handleReaction = (type: ReactionType) => {
     toggleReaction("post", post.id, type);
@@ -269,6 +274,13 @@ export default function PostCard({ post, currentUserId = "user-001", onProfileCl
         >
           <Share2 className="w-5 h-5" />
           <span>Share</span>
+        </button>
+        <button
+          onClick={() => toggleBookmark(currentUserId, post.id)}
+          className={`flex items-center justify-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition ${bookmarked ? "text-primary" : "text-gray-600 dark:text-gray-300"}`}
+          title={bookmarked ? "Remove from saved" : "Save post"}
+        >
+          {bookmarked ? <BookmarkCheck className="w-5 h-5" /> : <Bookmark className="w-5 h-5" />}
         </button>
       </div>
 

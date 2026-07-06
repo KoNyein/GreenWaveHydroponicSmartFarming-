@@ -6,6 +6,7 @@ import { Leaf, TrendingUp, Users, Newspaper } from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import PostComposer from "@/components/social/PostComposer";
 import PostCard from "@/components/social/PostCard";
+import { StoriesBar } from "@/components/social/StoriesBar";
 import { useSocialStore } from "@/lib/social-store";
 import { socialUsers } from "@/lib/social-mock-data";
 
@@ -57,7 +58,10 @@ export default function FeedPage() {
   return (
     <DashboardLayout>
       <div className="max-w-[680px] mx-auto py-4 px-4">
-        {/* Stories / Quick Links Bar */}
+        {/* Stories */}
+        <StoriesBar />
+
+        {/* Quick Links Bar */}
         <div className="flex gap-3 mb-4 overflow-x-auto pb-2">
           <button className="flex flex-col items-center gap-1 min-w-[72px] p-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-green-300 dark:hover:border-green-700 transition-colors">
             <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/40 flex items-center justify-center">

@@ -152,4 +152,136 @@ supabase/
 3. @mention autocomplete in post composer
 4. Post editing support
 5. Report/block functionality
-6. Search across posts and users
+
+---
+
+# Phase 2 — Messaging, Search & Stories: Report
+
+## Overview
+
+Phase 2 enhances GreenWave with a full-featured messaging system (group chats, reactions, read receipts, typing indicators), ephemeral Stories, global search, bookmarks/saved posts, and trending content discovery.
+
+## Completed Features
+
+### 1. Database Schema (`supabase/migrations/003_phase2_messaging_search_stories.sql`)
+
+| Table | Fields | Purpose |
+|-------|--------|---------|
+| group_chats | id, name, avatar_url, created_by, is_group, last_message_at | DM and group conversations |
+| chat_members | chat_id, user_id, role, is_online, is_typing, last_read_at | Membership + presence |
+| messages | chat_id, sender_id, content, message_type, media_url, location, reply_to_id, read_by | Chat messages (text, image, audio, video, location, file) |
+| message_reactions | message_id, user_id, emoji | Emoji reactions on messages |
+| stories | author_id, content, media_url, media_type, background_color, viewers, expires_at | 24-hour ephemeral content |
+| bookmarks | user_id, post_id | Saved/bookmarked posts |
+
+### 2. RLS Policies
+
+| Table | SELECT | INSERT | UPDATE | DELETE |
+|-------|--------|--------|--------|--------|
+| group_chats | Members only | Creator | - | - |
+| chat_members | Chat participants | Admins or self | Own status only | - |
+| messages | Chat members | Sender + member | Sender only | - |
+| message_reactions | Chat members | Own only | - | Own only |
+| stories | Friends + own | Own only | Own only | Own only |
+| bookmarks | Own only | Own only | - | Own only |
+
+### 3. Enhanced Messenger (`/messenger`)
+
+- **Group chats**: Create and manage multi-user conversations
+- **Message types**: Text, image, audio, video, location, file, system
+- **Reactions**: Emoji reactions on individual messages (6 quick-access emojis)
+- **Read receipts**: Double-check icon (blue) for read, single check for delivered
+- **Typing indicator**: Animated dots with user name
+- **Online status**: Green dot on avatar, status text in header
+- **Reply-to**: Quote and reply to specific messages
+- **Message deletion**: Soft delete with "This message was deleted" placeholder
+
+### 4. Stories (`StoriesBar` component in Feed)
+
+- **Create story**: Text or image with customizable background colors (8 options)
+- **Story viewer**: Full-screen modal with progress bars, navigation (prev/next)
+- **Story groups**: Grouped by author, unseen indicator (green ring)
+- **24-hour expiry**: Stories auto-expire (tracked via `expires_at`)
+- **View counter**: Author can see viewer count
+- **Navigation**: Auto-advance between story groups
+
+### 5. Global Search (`/search`)
+
+- **Multi-tab results**: All, People, Posts
+- **Live filtering**: Real-time search as you type
+- **Recent searches**: Persistent search history with clear option
+- **Trending topics**: Quick-access hashtag buttons
+- **People suggestions**: "People You May Know" grid
+- **Rich results**: User cards with bio/location, post cards with full interaction
+
+### 6. Bookmarks / Saved Posts (`/bookmarks`)
+
+- **Save/unsave toggle**: Bookmark icon on every PostCard
+- **Bookmarks page**: Full list with search, remove individual bookmarks
+- **Zustand persistence**: Optimistic state management
+- **Integration**: Bookmark button appears on every post in feed, search, trending
+
+### 7. Trending Posts (`/trending`)
+
+- **Engagement scoring**: reactions * 1 + comments * 3 + shares * 5
+- **Recency multiplier**: 2x for <24h, 1.5x for <72h, 1x otherwise
+- **Sort modes**: Trending (score-based), Newest, Top (raw engagement)
+- **Rank badges**: Gold/silver/bronze for top 3 posts
+- **Sidebar**: Trending topics with growth %, top contributors leaderboard
+
+## File Structure
+
+```
+supabase/
+  migrations/003_phase2_messaging_search_stories.sql
+  seed_phase2.ts
+src/
+  types/messaging.ts
+  lib/
+    messaging-mock-data.ts
+    messaging-store.ts
+  components/social/
+    StoriesBar.tsx
+  app/
+    messenger/page.tsx (rewritten)
+    (social)/
+      search/page.tsx
+      bookmarks/page.tsx
+      trending/page.tsx
+```
+
+## Mock Data Summary
+
+| Entity | Count | Notes |
+|--------|-------|-------|
+| Group chats | 6 | 3 DMs + 3 groups |
+| Chat members | 17 | Across all chats |
+| Messages | 18 | Mixed types (text, image, location, file) |
+| Stories | 7 | From all 5 users |
+| Bookmarks | 5 | Admin's saved posts |
+
+## Tech Stack Alignment
+
+- **Next.js App Router**: New routes under `(social)` grouped layout
+- **Tailwind CSS 4**: Dark mode support via custom variant
+- **Zustand**: `useMessagingStore` for messages, stories, bookmarks
+- **Lucide React**: Consistent icon library
+- **TypeScript**: Strict types in `types/messaging.ts`
+- **Mock data pattern**: Consistent with Phase 0/1 approach
+
+## Navigation Updates
+
+Sidebar updated with 3 new items:
+- Search (`/search`)
+- Trending (`/trending`)
+- Saved (`/bookmarks`)
+
+## Next Steps (Phase 3 candidates)
+
+1. Video/voice calling (WebRTC)
+2. Group chat admin panel (add/remove members, change roles)
+3. Story highlights (pin past stories to profile)
+4. Advanced search filters (date range, user, media type)
+5. Push notifications (service worker + FCM)
+6. Real-time messaging via Supabase Realtime subscriptions
+7. Message forwarding and pinned messages

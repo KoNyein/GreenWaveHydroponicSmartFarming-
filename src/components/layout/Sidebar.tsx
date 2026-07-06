@@ -29,6 +29,9 @@ import {
   Newspaper,
   Bell,
   Heart,
+  Search,
+  Bookmark,
+  TrendingUp,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -47,6 +50,9 @@ export default function Sidebar() {
     { href: "/feed", label: "Feed", icon: Newspaper },
     { href: "/friends", label: "Friends", icon: Heart },
     { href: "/notifications", label: "Notifications", icon: Bell },
+    { href: "/search", label: "Search", icon: Search },
+    { href: "/trending", label: "Trending", icon: TrendingUp },
+    { href: "/bookmarks", label: "Saved", icon: Bookmark },
   ];
 
   // Common navigation items for all users
