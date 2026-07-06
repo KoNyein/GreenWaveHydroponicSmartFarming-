@@ -1,181 +1,147 @@
 "use client";
 
-import Link from "next/link";
-import { useSettingsStore } from "@/lib/store";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { t } from "@/lib/translations";
-import {
-  BarChart3,
-  Users,
-  ShoppingBag,
-  DollarSign,
-  Package,
-  FileText,
-  Calendar,
-  Download,
-} from "lucide-react";
+import { useState } from "react";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import { usePhase4Store } from "@/lib/phase4-store";
+import { socialUsers } from "@/lib/social-mock-data";
+import { Flag, Check, X, Eye, ArrowLeft, Filter } from "lucide-react";
+import { useRouter } from "next/navigation";
+import type { ReportStatus } from "@/types/phase4";
 
-export default function AdminReportsPage() {
-  const { locale } = useSettingsStore();
-  const tr = (key: string) => t(key, locale);
+const STATUS_FILTERS: ReportStatus[] = ["pending", "reviewing", "resolved", "dismissed"];
 
-  const reportTypes = [
-    {
-      title: tr("adminReports.salesReports"),
-      description: tr("adminReports.salesReportsDesc"),
-      icon: DollarSign,
-      href: "/admin/reports/sales",
-      color: "bg-green-500",
-    },
-    {
-      title: tr("adminReports.userReports"),
-      description: tr("adminReports.userReportsDesc"),
-      icon: Users,
-      href: "/admin/reports/users",
-      color: "bg-blue-500",
-    },
-    {
-      title: tr("adminReports.productReports"),
-      description: tr("adminReports.productReportsDesc"),
-      icon: Package,
-      href: "/admin/reports/products",
-      color: "bg-purple-500",
-    },
-    {
-      title: tr("adminReports.orderReports"),
-      description: tr("adminReports.orderReportsDesc"),
-      icon: ShoppingBag,
-      href: "/admin/reports/orders",
-      color: "bg-orange-500",
-    },
-    {
-      title: tr("adminReports.financialReports"),
-      description: tr("adminReports.financialReportsDesc"),
-      icon: BarChart3,
-      href: "/admin/reports/financial",
-      color: "bg-teal-500",
-    },
-    {
-      title: tr("adminReports.activityReports"),
-      description: tr("adminReports.activityReportsDesc"),
-      icon: Calendar,
-      href: "/admin/reports/activity",
-      color: "bg-pink-500",
-    },
-  ];
+export default function ReportsPage() {
+  const router = useRouter();
+  const { reports, resolveReport } = usePhase4Store();
+  const [statusFilter, setStatusFilter] = useState<ReportStatus | "all">("pending");
+
+  const filteredReports = statusFilter === "all"
+    ? reports
+    : reports.filter((r) => r.status === statusFilter);
+
+  const statusColors: Record<ReportStatus, string> = {
+    pending: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
+    reviewing: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+    resolved: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+    dismissed: "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400",
+  };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">{tr("adminReports.title")}</h1>
-          <p className="text-muted text-sm mt-1">{tr("adminReports.subtitle")}</p>
+    <DashboardLayout>
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-6">
+          <button onClick={() => router.push("/admin")} className="p-2 rounded-lg hover:bg-hover-bg">
+            <ArrowLeft className="w-5 h-5 text-muted" />
+          </button>
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center">
+            <Flag className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-foreground">Moderation Queue</h1>
+            <p className="text-sm text-muted">{reports.filter((r) => r.status === "pending").length} pending reports</p>
+          </div>
         </div>
-        <Button asChild size="sm" className="gap-2">
-          <Link href="/admin/reports/export">
-            <Download className="w-4 h-4" />
-            {tr("adminReports.exportAll")}
-          </Link>
-        </Button>
-      </div>
 
-      {/* Report Types */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {reportTypes.map((report) => {
-          const Icon = report.icon;
-          return (
-            <Card key={report.title} className="hover:shadow-lg transition-shadow">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${report.color}/10`}>
-                    <Icon className={`w-6 h-6 ${report.color}`} />
+        {/* Filters */}
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
+          <button
+            onClick={() => setStatusFilter("all")}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${
+              statusFilter === "all" ? "bg-primary text-white" : "bg-card-bg border border-card-border text-muted"
+            }`}
+          >
+            All ({reports.length})
+          </button>
+          {STATUS_FILTERS.map((s) => (
+            <button
+              key={s}
+              onClick={() => setStatusFilter(s)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap capitalize ${
+                statusFilter === s ? "bg-primary text-white" : "bg-card-bg border border-card-border text-muted"
+              }`}
+            >
+              {s} ({reports.filter((r) => r.status === s).length})
+            </button>
+          ))}
+        </div>
+
+        {/* Reports List */}
+        <div className="space-y-3">
+          {filteredReports.map((report) => {
+            const reporter = socialUsers.find((u) => u.id === report.reporter_id);
+            return (
+              <div key={report.id} className="bg-card-bg border border-card-border rounded-xl p-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-3">
+                    {reporter?.avatar_url ? (
+                      <img src={reporter.avatar_url} alt="" className="w-9 h-9 rounded-full object-cover" />
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-bold">
+                        {reporter?.full_name?.charAt(0) || "?"}
+                      </div>
+                    )}
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-foreground">{reporter?.full_name || "Unknown"}</span>
+                        <span className="text-xs text-muted">reported a</span>
+                        <span className="text-xs font-medium text-foreground capitalize">{report.target_type}</span>
+                      </div>
+                      <p className="text-xs text-muted mt-0.5">
+                        Reason: <span className="capitalize font-medium text-foreground">{report.reason.replace("_", " ")}</span>
+                      </p>
+                      {report.description && (
+                        <p className="text-xs text-muted mt-1 bg-hover-bg p-2 rounded-lg">{report.description}</p>
+                      )}
+                      <p className="text-xs text-muted mt-1">{new Date(report.created_at).toLocaleString()}</p>
+                    </div>
                   </div>
-                  <Button asChild variant="outline" size="sm">
-                    <Link href={report.href}>{tr("common.view")}</Link>
-                  </Button>
+                  <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${statusColors[report.status]}`}>
+                    {report.status}
+                  </span>
                 </div>
-                <h3 className="text-lg font-semibold mb-2">{report.title}</h3>
-                <p className="text-sm text-muted">{report.description}</p>
+
+                {/* Actions */}
+                {report.status === "pending" && (
+                  <div className="flex gap-2 mt-3 ml-12">
+                    <button
+                      onClick={() => resolveReport(report.id, "reviewing")}
+                      className="flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white rounded-lg text-xs font-medium hover:bg-blue-600"
+                    >
+                      <Eye className="w-3.5 h-3.5" /> Review
+                    </button>
+                    <button
+                      onClick={() => resolveReport(report.id, "resolved", "Action taken")}
+                      className="flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white rounded-lg text-xs font-medium hover:bg-green-600"
+                    >
+                      <Check className="w-3.5 h-3.5" /> Resolve
+                    </button>
+                    <button
+                      onClick={() => resolveReport(report.id, "dismissed", "No violation found")}
+                      className="flex items-center gap-1 px-3 py-1.5 bg-gray-500 text-white rounded-lg text-xs font-medium hover:bg-gray-600"
+                    >
+                      <X className="w-3.5 h-3.5" /> Dismiss
+                    </button>
+                  </div>
+                )}
+
+                {report.resolution_note && (
+                  <div className="mt-2 ml-12 text-xs text-muted">
+                    Resolution: <span className="text-foreground">{report.resolution_note}</span>
+                  </div>
+                )}
               </div>
-            </Card>
-          );
-        })}
+            );
+          })}
+        </div>
+
+        {filteredReports.length === 0 && (
+          <div className="text-center py-12 text-muted">
+            <Flag className="w-12 h-12 mx-auto mb-3 opacity-30" />
+            <p>No reports found</p>
+          </div>
+        )}
       </div>
-
-      {/* Quick Stats */}
-      <Card title={tr("adminReports.quickStats")}>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center p-4">
-            <p className="text-2xl font-bold">1247</p>
-            <p className="text-sm text-muted">{tr("adminReports.totalUsers")}</p>
-          </div>
-          <div className="text-center p-4">
-            <p className="text-2xl font-bold">$245,890</p>
-            <p className="text-sm text-muted">{tr("adminReports.totalRevenue")}</p>
-          </div>
-          <div className="text-center p-4">
-            <p className="text-2xl font-bold">1567</p>
-            <p className="text-sm text-muted">{tr("adminReports.totalOrders")}</p>
-          </div>
-          <div className="text-center p-4">
-            <p className="text-2xl font-bold">342</p>
-            <p className="text-sm text-muted">{tr("adminReports.totalProducts")}</p>
-          </div>
-        </div>
-      </Card>
-
-      {/* Recent Reports */}
-      <Card title={tr("adminReports.recentReports")}>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-hover-bg rounded-lg">
-            <div className="flex items-center gap-4">
-              <FileText className="w-6 h-6 text-muted" />
-              <div>
-                <p className="font-medium">{tr("adminReports.monthlySales")}</p>
-                <p className="text-sm text-muted">June 2024</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="font-semibold">$45,890</p>
-              <Button asChild variant="ghost" size="sm">
-                <Link href="/admin/reports/sales">{tr("common.view")}</Link>
-              </Button>
-            </div>
-          </div>
-          <div className="flex items-center justify-between p-4 bg-hover-bg rounded-lg">
-            <div className="flex items-center gap-4">
-              <Users className="w-6 h-6 text-muted" />
-              <div>
-                <p className="font-medium">{tr("adminReports.userGrowth")}</p>
-                <p className="text-sm text-muted">Q2 2024</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="font-semibold">+127</p>
-              <Button asChild variant="ghost" size="sm">
-                <Link href="/admin/reports/users">{tr("common.view")}</Link>
-              </Button>
-            </div>
-          </div>
-          <div className="flex items-center justify-between p-4 bg-hover-bg rounded-lg">
-            <div className="flex items-center gap-4">
-              <Package className="w-6 h-6 text-muted" />
-              <div>
-                <p className="font-medium">{tr("adminReports.topProducts")}</p>
-                <p className="text-sm text-muted">June 2024</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="font-semibold">42</p>
-              <Button asChild variant="ghost" size="sm">
-                <Link href="/admin/reports/products">{tr("common.view")}</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Card>
-    </div>
+    </DashboardLayout>
   );
 }
