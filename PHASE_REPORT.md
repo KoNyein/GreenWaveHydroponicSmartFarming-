@@ -285,3 +285,135 @@ Sidebar updated with 3 new items:
 5. Push notifications (service worker + FCM)
 6. Real-time messaging via Supabase Realtime subscriptions
 7. Message forwarding and pinned messages
+
+---
+
+# Phase 3 — Groups, Events & Marketplace Pro: Report
+
+## Overview
+
+Phase 3 adds community features (Groups, Events), marketplace enhancements (Reviews, Offers), interactive Polls, and Hashtag navigation to create a comprehensive social platform for hydroponic farming.
+
+## Completed Features
+
+### 1. Database Schema (`supabase/migrations/004_phase3_groups_events_marketplace.sql`)
+
+| Table | Fields | Purpose |
+|-------|--------|---------|
+| groups | id, name, slug, description, avatar_url, cover_url, privacy, category, created_by, member_count, post_count | Community groups |
+| group_members | group_id, user_id, role, status, joined_at | Group membership |
+| events | id, title, description, cover_url, location, start_date, end_date, event_type, max_attendees, price, created_by, attendee_count | Community events |
+| event_rsvps | event_id, user_id, status | RSVP tracking |
+| reviews | reviewer_id, seller_id, listing_id, rating, content | Marketplace reviews |
+| offers | listing_id, buyer_id, seller_id, amount, message, status, counter_amount | Marketplace negotiation |
+| polls | post_id, question, allows_multiple, ends_at, total_votes | Post polls |
+| poll_options | poll_id, text, vote_count, sort_order | Poll answer options |
+| poll_votes | poll_id, option_id, user_id | Vote tracking |
+| hashtags | name, post_count | Hashtag registry |
+| post_hashtags | post_id, hashtag_id | Post-hashtag junction |
+
+### 2. RLS Policies
+
+| Table | SELECT | INSERT | UPDATE | DELETE |
+|-------|--------|--------|--------|--------|
+| groups | Public: all; Private/Secret: members | Authenticated | Admins | - |
+| group_members | Group participants or public groups | Self or admin/mod | Self or admin | - |
+| events | All | Authenticated | Creator | Creator |
+| event_rsvps | All | Own | Own | - |
+| reviews | All | Reviewer | - | - |
+| offers | Buyer + Seller | Buyer | Buyer + Seller | - |
+| polls | All | Post author | - | - |
+| poll_votes | All | Own | - | Own |
+| hashtags | All | System | - | - |
+
+### 3. Groups/Communities (`/groups`, `/groups/[slug]`)
+
+- **Group listing**: Grid view with search + category filter
+- **Create group modal**: Name, description, privacy, category
+- **Group detail**: Cover photo, member list with roles (Crown/Shield icons), post area
+- **Join/Leave**: Toggle membership with optimistic count updates
+- **6 categories**: Education, Equipment, Science, Marketplace, Regional, Nutrients
+- **Privacy levels**: Public (visible to all), Private (members only), Secret (invite only)
+
+### 4. Events (`/events`)
+
+- **Event listing**: Cards with cover images, type badges, location, time
+- **Create event modal**: Title, description, dates, location, type, max attendees
+- **RSVP system**: Going/Interested buttons with state persistence
+- **Event types**: Meetup, Workshop, Farm Tour, Harvest, Online, Other
+- **Filter tabs**: Upcoming, Going, All
+- **Pricing**: Free/paid events with price display
+
+### 5. Marketplace Pro (Components)
+
+- **SellerReviews**: Star ratings (1-5), reviewer avatar + text, average rating calc
+- **OfferCard**: Offer amount, status badges, counter-offer display, accept/decline/counter buttons
+- **Offer statuses**: Pending, Accepted, Declined, Countered, Expired
+
+### 6. Polls (`PollCard` component)
+
+- **Embedded in posts**: Any post can have an attached poll
+- **Vote interaction**: Click to vote, toggle selection
+- **Progress bars**: Visual percentage after voting
+- **Multi-select**: Optional multiple choice support
+- **Expiration**: End date with expired state handling
+- **Results display**: Vote counts and percentages
+
+### 7. Hashtag Pages (`/hashtag/[tag]`)
+
+- **Topic feed**: Posts containing the hashtag
+- **Related tags sidebar**: Discover similar topics
+- **Post count**: Number of posts per hashtag
+- **10 seeded hashtags**: hydroponics, LED_grow, organic, harvest2025, nutrients, pH_balance, DWC, seedlings, genetics, terpenes
+
+## File Structure
+
+```
+supabase/
+  migrations/004_phase3_groups_events_marketplace.sql
+  seed_phase3.ts
+src/
+  types/phase3.ts
+  lib/
+    phase3-mock-data.ts
+    phase3-store.ts
+  components/
+    social/PollCard.tsx
+    marketplace/SellerReviews.tsx
+    marketplace/OfferCard.tsx
+  app/(social)/
+    groups/page.tsx
+    groups/[slug]/page.tsx
+    events/page.tsx
+    hashtag/[tag]/page.tsx
+```
+
+## Mock Data Summary
+
+| Entity | Count | Notes |
+|--------|-------|-------|
+| Groups | 6 | 4 public, 1 private, across 6 categories |
+| Group members | 19 | Mixed admin/mod/member roles |
+| Events | 5 | Tour, workshop, harvest, meetup, online |
+| Event RSVPs | 10 | Going + interested |
+| Reviews | 5 | 3-5 star ratings with text |
+| Offers | 3 | Pending, accepted, countered |
+| Polls | 3 | Single + multiple choice, with/without expiry |
+| Hashtags | 10 | Top farming topics |
+
+## Navigation Updates
+
+Sidebar updated with 2 new items:
+- Groups (`/groups`)
+- Events (`/events`)
+
+## Next Steps (Phase 4 candidates)
+
+1. Video/voice calling (WebRTC)
+2. Group post feed (posts scoped to group)
+3. Event reminders and calendar integration
+4. Marketplace checkout flow (Stripe/payment)
+5. Advanced hashtag analytics
+6. Poll creation UI in post composer
+7. Group moderation tools (ban, mute, report)
+8. Push notifications (service worker + FCM)

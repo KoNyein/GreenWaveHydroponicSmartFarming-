@@ -32,6 +32,8 @@ import {
   Search,
   Bookmark,
   TrendingUp,
+  UsersRound,
+  Calendar,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -49,6 +51,8 @@ export default function Sidebar() {
   const socialNavItems = [
     { href: "/feed", label: "Feed", icon: Newspaper },
     { href: "/friends", label: "Friends", icon: Heart },
+    { href: "/groups", label: "Groups", icon: UsersRound },
+    { href: "/events", label: "Events", icon: Calendar },
     { href: "/notifications", label: "Notifications", icon: Bell },
     { href: "/search", label: "Search", icon: Search },
     { href: "/trending", label: "Trending", icon: TrendingUp },
