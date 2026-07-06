@@ -153,3 +153,95 @@ supabase/
 4. Post editing support
 5. Report/block functionality
 6. Search across posts and users
+
+---
+
+# Phase 4 — Admin Dashboard, Analytics & Notifications Pro: Report
+
+## Overview
+
+Phase 4 adds platform management capabilities: an admin dashboard with system stats, content moderation queue, analytics with daily metrics, notification preference management, and activity logging for audit trails.
+
+## Completed Features
+
+### 1. Database Schema (`supabase/migrations/005_phase4_admin_analytics.sql`)
+
+| Table | Fields | Purpose |
+|-------|--------|---------|
+| reports | reporter_id, target_type, target_id, reason, description, status, resolved_by | Content moderation |
+| activity_logs | user_id, action, target_type, target_id, metadata, ip_address | Audit trail |
+| notification_settings | user_id, push_*, email_*, sound, vibration, quiet_hours | User preferences |
+| analytics_daily | date, users, posts, comments, reactions, page_views, revenue | Daily aggregates |
+| moderation_actions | moderator_id, target_type, action, reason, duration_hours | Mod action log |
+
+### 2. Admin Dashboard (`/admin`)
+
+- **Stats grid**: Total users, active today, total posts, pending reports, revenue, new this week
+- **Quick actions**: Links to moderation queue, analytics, activity log
+- **Recent reports**: Top 4 pending reports with reason badges
+- **Moderation actions**: Recent mod actions with action-type badges (warn/hide/delete/ban/suspend)
+
+### 3. Moderation Queue (`/admin/reports`)
+
+- **Status filters**: All/Pending/Reviewing/Resolved/Dismissed with counts
+- **Report cards**: Reporter info, target type, reason, description, timestamps
+- **Actions**: Review/Resolve/Dismiss buttons for pending reports
+- **Resolution notes**: Display for already-resolved reports
+
+### 4. Analytics (`/admin/analytics`)
+
+- **Metric cards**: Total users, new users (14d), page views, revenue with growth indicators
+- **Bar chart**: Page views over 14 days with proportional bars
+- **Daily breakdown table**: Date, new users, active, posts, views, revenue
+
+### 5. Notification Settings (`/notification-settings`)
+
+- **Push notifications**: Master toggle + per-category (messages, reactions, comments, friends, groups, events, marketplace)
+- **Email notifications**: Master toggle, digest frequency (realtime/daily/weekly/never), marketing, security
+- **Sound & haptics**: Sound toggle, vibration toggle
+- **Quiet hours**: Enable/disable with start/end time pickers
+
+### 6. Activity Log (`/activity`)
+
+- **Timeline grouped by date**: Visual timeline with action-specific icons and colors
+- **17 action types**: login, logout, post_create, comment, reaction, friend request/accept, group join/leave, event RSVP, listing create, purchase, offer, profile update, settings change, report
+- **Metadata display**: Additional context (e.g., amount, setting changed, reaction type)
+
+## File Structure
+
+```
+supabase/
+  migrations/005_phase4_admin_analytics.sql
+  seed_phase4.ts
+src/
+  types/phase4.ts
+  lib/
+    phase4-mock-data.ts
+    phase4-store.ts
+  app/
+    admin/page.tsx
+    admin/reports/page.tsx
+    admin/analytics/page.tsx
+    (social)/activity/page.tsx
+    (social)/notification-settings/page.tsx
+```
+
+## Mock Data Summary
+
+| Entity | Count | Notes |
+|--------|-------|-------|
+| Reports | 8 | 4 pending, 1 reviewing, 1 resolved, 1 dismissed |
+| Activity Logs | 15 | 17 action types demonstrated |
+| Notification Settings | 1 | Full preference object for current user |
+| Analytics Daily | 14 | Last 14 days with randomized metrics |
+| Moderation Actions | 5 | warn, hide, delete, suspend actions |
+
+## Next Steps (Phase 5 candidates)
+
+1. Real-time push notifications (FCM / service worker)
+2. Email notification delivery (SendGrid / Resend)
+3. Advanced analytics charts (Chart.js / Recharts)
+4. User ban/suspend from admin panel (actual state change)
+5. Export analytics data (CSV/PDF)
+6. Content auto-moderation (AI-based spam detection)
+7. Two-factor authentication setup
